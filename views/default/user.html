@@ -7,7 +7,6 @@
     </h2>
     {{=form}}
     {{if request.args(0)=='login' and not 'register' in auth.settings.actions_disabled:}}
-    <a href="{{=URL('user/register')}}">{{=T('Register')}}</a>
     <br/>
     {{pass}}
     {{if request.args(0)=='login' and not 'retrieve_password' in auth.settings.actions_disabled:}}

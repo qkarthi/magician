@@ -137,15 +137,15 @@ if configuration.get('scheduler.enabled'):
 #
 db.define_table('db_serverDet',
                 Field('name', 'string'),
-                Field('ip_address', 'string'),
-                Field('region', 'string')
+                Field('ip_address', 'string'),  # need a regular expression
+                Field('region', 'string', requires=IS_IN_SET(['N_virginia', 'Oregon', 'Sydney']))
                 )
 
 db.define_table('db_spinUser',
                 Field('name', 'string', requires=IS_NOT_EMPTY()),
                 Field('team', 'string', requires=IS_IN_SET(['DevOps', 'Development', 'QA'])),
                 Field('email', 'string', requires=IS_EMAIL()),
-                Field('emp_id', 'string', requires=IS_EMAIL()),
+                Field('emp_id', 'string', requires=IS_NOT_EMPTY()),
                 Field('ssh_keys', 'text', requires=IS_NOT_EMPTY())
                 )
 #

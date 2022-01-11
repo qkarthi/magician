@@ -18,7 +18,7 @@ if not configuration.get('app.production'):
     response.menu += [
 
         (T('Menu'), False, '#', [
-            (T('SSH - Keys'), False, URL('admin', 'default', 'ssh')),
+            (T('SSH - Keys'), False, URL('welcome', 'ssh_grabber', 'index')),
         ])
 
     ]
