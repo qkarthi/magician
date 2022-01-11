@@ -53,3 +53,32 @@ CREATE TABLE "auth_cas"(
     "renew" CHAR(1)
 );
 success!
+timestamp: 2022-01-11T15:37:25.596776
+CREATE TABLE "db_serverDet"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "name" CHAR(512),
+    "ipaddress" CHAR(512),
+    "region" TEXT
+);
+success!
+success!
+timestamp: 2022-01-11T15:39:39.995540
+CREATE TABLE "db_userKey"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "name" CHAR(512),
+    "team" CHAR(512),
+    "ssh" TEXT
+);
+success!
+timestamp: 2022-01-11T16:00:40.265617
+CREATE TABLE "db_spinUser"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "name" CHAR(512),
+    "team" CHAR(512),
+    "ssh" TEXT
+);
+success!
+success!
+timestamp: 2022-01-11T16:29:14.135501
+ALTER TABLE "db_spinUser" ADD "email" CHAR(512);
+success!

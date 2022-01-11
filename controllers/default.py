@@ -6,8 +6,11 @@
 
 # ---- example index page ----
 def index():
-    response.flash = T("Hello World")
-    return dict(message=T('Welcome to web2py!'))
+    response.flash = T("Welcome")
+    srv_cnt = db(db.db_serverDet.id > 0).count()
+    usr_cnt = db(db.db_spinUser.id > 0).count()
+    return dict(srv_cnt=srv_cnt, usr_cnt=usr_cnt)
+    return dict(srv_cnt=srv_cnt, usr_cnt=usr_cnt)
 
 # ---- API (example) -----
 @auth.requires_login()
