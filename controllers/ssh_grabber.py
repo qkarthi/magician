@@ -1,10 +1,7 @@
-
-
 @auth.requires_login()
 def index():
     rows = db().select(db.db_serverDet.ALL)
     return dict(rows=rows)
-
 
 @auth.requires_login()
 def authSshGet():
@@ -21,3 +18,5 @@ def authSshGet():
     ssh_client.close()
     print(k)
     return dict(k=k)
+
+

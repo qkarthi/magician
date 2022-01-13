@@ -2,7 +2,7 @@
 def index():
     response.flash = T("Welcome")
     srv_cnt = db(db.db_serverDet.id > 0).count()
-    usr_cnt = db(db.db_spinUser.id > 0).count()
+    usr_cnt = db(db.db_user.id > 0).count()
     return dict(srv_cnt=srv_cnt, usr_cnt=usr_cnt)
     return dict(srv_cnt=srv_cnt, usr_cnt=usr_cnt)
 

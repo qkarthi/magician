@@ -148,7 +148,7 @@ db.define_table('db_serverDet',
                 Field('vpn', requires=IS_IN_SET(['N/A', 'NJ', 'MI', 'PA']))
                 )
 
-db.define_table('db_spinUser',
+db.define_table('db_user',
                 Field('name', 'string', requires=IS_NOT_EMPTY()),
                 Field('team', 'string', requires=IS_IN_SET(['DevOps', 'Development', 'QA'])),
                 Field('email', 'string', requires=IS_EMAIL()),
