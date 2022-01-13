@@ -1,0 +1,87 @@
+{{extend 'layout.html'}}
+{{extend 'layout.html'}}
+<!DOCTYPE html>
+<html>
+
+<head>
+  <style>
+    table tr:nth-child(even) {
+      background-color: #eee;
+    }
+
+    table tr:nth-child(odd) {
+      background-color: #fff;
+    }
+
+    table th {
+      background-color: orange;
+      color: white;
+    }
+
+    table,
+    th,
+    td {
+      border: 1px solid black;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 5px;
+      text-align: center;
+    }
+
+    th {
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <br>
+  <center>
+    <h2> Select User </h2>
+  </center>
+  <hr>
+  <br>
+  <center>
+    <table BORDER='2'>
+      <tr>
+<th><b>DB ID</b></th>
+<th><b>EMP ID</b></th>
+        <th><b>Name</b></th>
+<th><b>Team</b></th>
+
+          <th><b>Email</b></th>
+        <th><b>SSH Key Id</b></th>
+        <th><b>Authorized Area</b></th>
+        <th><b>Action</b></th>
+      </tr>
+      {{for row in rows:}}
+      <tr>{{=TD(row.id)}}{{=TD(row.emp_id)}}{{=TD(row.name)}}{{=TD(row.team)}}{{=TD(row.email)}}{{=TD(row.ssh_key_id)}}
+        <td>
+        {{if row.development:}}
+          DEVELOPMENT<br>
+        {{pass}}
+        {{if row.testing:}}
+            TESTING <br>
+        {{pass}}
+        {{if row.research:}}
+            RESEARCH <br>
+        {{pass}}
+        {{if row.stage:}}
+            STAGE <br>
+        {{pass}}
+        {{if row.production:}}
+            PRODUCTION <br>
+        {{pass}}
+        </td>
+      {{=TD(A(T ("Push SSH") ,_href=URL("add1ums_phase1",args=row.id)))}}</tr>
+      {{pass}}
+    </table>
+  </center>
+  <br>
+  <br>
+</body>
+
+</html>

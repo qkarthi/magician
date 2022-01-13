@@ -29,7 +29,10 @@ if not configuration.get('app.production'):
             (T('In-active'), False, URL('welcome', 'user', 'inactUser'))
         ]),
         (T('SSH'), False, '#', [
-            (T('Audit'), False, URL('welcome', 'ssh_grabber', 'index')),
+            (T('Audit server wise'), False, URL('welcome', 'ssh_grabber', 'index')),
+            (T('Add 1 User - (N) Server'), False, URL('welcome', 'ssh_grabber', 'add1ums')),
+            (T('Add (N) User - 1 Server'), False, URL('welcome', 'ssh_grabber', 'addmuss')),
+            (T('DEL 1 User - (N) Server'), False, URL('welcome', 'ssh_grabber', 'delsums')),
         ]),
 
 

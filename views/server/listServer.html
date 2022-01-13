@@ -75,6 +75,7 @@
       <tr>
         <th><b>S.no</b></th>
         <th><b>Instance name</b></th>
+        <th><b>Instance ID</b></th>
         <th><b>Category</b></th>
         <th><b>Purpose</b></th>
         <th><b>PUB-IPV4</b></th>
@@ -85,7 +86,7 @@
         <ul class="search">
       {{for row in rows:}}
         <div class="searchable" data-index="{{=row.pub_ipv4}}">
-      <tr>{{=TD(row.id)}}{{=TD(row.name)}}{{=TD(row.category)}}{{=TD(row.purpose)}}{{=TD(row.pub_ipv4)}}{{=TD(row.pri_ipv4)}}{{=TD(row.hosted_region)}}{{=TD(A(T ("Edit") ,_href=URL("editServer",args=row.id)))}}</tr>
+      <tr>{{=TD(row.id)}}{{=TD(row.name)}}{{=TD(row.instance_id)}}{{=TD(row.category)}}{{=TD(row.purpose)}}{{=TD(row.pub_ipv4)}}{{=TD(row.pri_ipv4)}}{{=TD(row.hosted_region)}}{{=TD(A(T ("Edit") ,_href=URL("editServer",args=row.id)))}}</tr>
       {{pass}}
     </table>
   </ul>

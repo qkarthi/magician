@@ -54,18 +54,25 @@
         <th><b>S.NO</b></th>
         <th><b>USER</b></th>
         <th><b>AUTHORISED</b></th>
-        <th><b>LAST AUDIT</b></th>
       </tr>
 {{i=0}}
+        {{tk=0}}
 {{for x in k:}}
 {{if len(x) > 10 :}}
 {{lf=x.rfind(" ")}}
 {{i=i+1}}
         <tr>
 {{=TD(i)}}
-{{ =TD(x[lf:-1]) }}
-{{ =TD("FALSE") }}
-{{ =TD("TODAY") }}
+{{sshKeyId=x[lf:-1]}}
+{{ =TD(sshKeyId) }}
+{{sshKeyId=sshKeyId[1:]}}
+{{validSsh = db(db.db_user.ssh_key_id == sshKeyId).count()}}
+{{if validSsh:}}
+{{ =TD("TRUE") }}
+{{tk=tk+1}}
+{{else:}}
+{{ =TD("-") }}
+{{pass}}
 {{pass}}
 </tr>
 {{pass}}
@@ -75,11 +82,8 @@
     </table>
     <br>
       <table>
-            <tr><td> Total number of SSH KEYS Present </td> <td>{{=i}}</td>  </tr>
-          <tr><td> Total number of Vulnarability KEYS </td> <td>{{=i}}</td>  </tr>
-          <tr> <td>Total number of DevOps KEYS</td> <td> 0 </td> </tr>
-          <tr> <td>Total number of Developer KEYS</td> <td> 0</td> </tr>
-          <tr> <td>Total number of QA KEYS </td> <td>0 </td> </tr>
+          <tr><td> Total number of SSH KEYS Present </td> <td>{{=i}}</td>  </tr>
+          <tr><td> Total number of Vulnarability KEYS </td> <td>{{=i-tk}}</td>  </tr>
 </table>
   <br>
 

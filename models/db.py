@@ -87,6 +87,10 @@ response.form_label_separator = ''
 
 # host names must be a list of allowed host names (glob syntax allowed)
 auth = Auth(db, host_names=configuration.get('host.names'))
+auth.settings.extra_fields['auth_user'] = [
+Field ('xxid', length=128,writable=False,readable=False)
+]
+auth.define_tables(username=False, signature=False)
 
 # -------------------------------------------------------------------------
 # create all tables needed by auth, maybe add a list of extra fields
@@ -135,28 +139,55 @@ if configuration.get('scheduler.enabled'):
 # -------------------------------------------------------------------------
 # Define your tables below (or better in another model file) for example
 #
+
+signature = db.Table(db,'auth_signature',
+        Field('time_stamp','datetime',default=request.now,
+            writable=False,readable=False, label=T('Created on')),
+        Field('created_by','reference %s' % auth.settings.table_user_name,default=auth.user_id,
+            writable=False,readable=False, label=T('Created by')),
+        Field('modified_on','datetime',update=request.now,default=request.now,
+            writable=False,readable=False, label=T('Modified on')),
+        Field('modified_by','reference %s' % auth.settings.table_user_name,default=auth.user_id,
+            update=auth.user_id,writable=False,readable=False, label=T('Modified by'))
+      )
+db._common_fields.append(signature) #db._common_fields is a list of fields that should belong to all the tables
+
+
 db.define_table('db_serverDet',
-                Field('name', 'string'),
+                Field('name', 'string', requires=IS_NOT_EMPTY()),
+                Field('instance_id', 'string', requires=IS_NOT_EMPTY()),
                 Field('pub_ipv4', requires=IS_MATCH('((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}'), label=T('IPV4 Public Address')),  # need a regular expression
-                Field('pri_ipv4', requires=IS_MATCH('((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}'), label=T('IPV4 Public Address')),  # need a regular expression
+                Field('pri_ipv4', requires=IS_MATCH('((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}'), label=T('IPV4 Private Address')),  # need a regular expression
                 Field('pub_ipv4_dns', 'string'),
-                Field('user_name', 'string'),
+                Field('username', 'string', requires=IS_NOT_EMPTY()),
                 Field('credential', 'string'),
                 Field('category', 'string', requires=IS_IN_SET(['Development', 'Testing', 'Research', 'Stage', 'Production'])),
                 Field('purpose', 'string', requires=IS_IN_SET(['Webserver', 'Load_balancer', 'Database', 'Backup'])),
                 Field('hosted_region', 'string', requires=IS_IN_SET(['N_virginia', 'Oregon', 'Sydney'])),
-                Field('vpn', requires=IS_IN_SET(['N/A', 'NJ', 'MI', 'PA']))
+                Field('vpn', requires=IS_IN_SET(['N/A', 'NJ', 'MI', 'PA'])),
+                Field('ssh_fetch', 'boolean', default=False,writable=False, readable=False)
                 )
 
 db.define_table('db_user',
                 Field('name', 'string', requires=IS_NOT_EMPTY()),
-                Field('team', 'string', requires=IS_IN_SET(['DevOps', 'Development', 'QA'])),
+                Field('team', 'string', requires=IS_IN_SET(['DevOps', 'Development', 'QA', 'Testing'])),
                 Field('email', 'string', requires=IS_EMAIL()),
                 Field('emp_id', 'string', requires=IS_NOT_EMPTY()),
-                Field('ssh_keys', 'text', requires=IS_NOT_EMPTY())
+                Field('ssh_key', 'text', requires=IS_NOT_EMPTY()),
+                Field('ssh_key_id', 'string', requires=IS_NOT_EMPTY()),
+                Field('development', 'boolean'),
+                Field('testing', 'boolean'),
+                Field('research', 'boolean'),
+                Field('stage', 'boolean'),
+                Field('production', 'boolean')
                 )
-#
-#
+db.define_table('db_serverSshData',
+                Field('server_named', 'string', requires=IS_NOT_EMPTY()),
+                Field('instance_id', 'string', requires=IS_NOT_EMPTY()),
+                Field('username', 'string'),
+                Field('auth_keys', 'text')
+                )
+
 # Fields can be 'string','text','password','integer','double','boolean'
 #       'date','time','datetime','blob','upload', 'reference TABLENAME'
 # There is an implicit 'id integer autoincrement' field
