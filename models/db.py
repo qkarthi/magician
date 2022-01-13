@@ -137,8 +137,15 @@ if configuration.get('scheduler.enabled'):
 #
 db.define_table('db_serverDet',
                 Field('name', 'string'),
-                Field('ip_address', 'string'),  # need a regular expression
-                Field('region', 'string', requires=IS_IN_SET(['N_virginia', 'Oregon', 'Sydney']))
+                Field('pub_ipv4', requires=IS_MATCH('((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}'), label=T('IPV4 Public Address')),  # need a regular expression
+                Field('pri_ipv4', requires=IS_MATCH('((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}'), label=T('IPV4 Public Address')),  # need a regular expression
+                Field('pub_ipv4_dns', 'string'),
+                Field('user_name', 'string'),
+                Field('credential', 'string'),
+                Field('category', 'string', requires=IS_IN_SET(['Development', 'Testing', 'Research', 'Stage', 'Production'])),
+                Field('purpose', 'string', requires=IS_IN_SET(['Webserver', 'Load_balancer', 'Database', 'Backup'])),
+                Field('hosted_region', 'string', requires=IS_IN_SET(['N_virginia', 'Oregon', 'Sydney'])),
+                Field('vpn', requires=IS_IN_SET(['N/A', 'NJ', 'MI', 'PA']))
                 )
 
 db.define_table('db_spinUser',

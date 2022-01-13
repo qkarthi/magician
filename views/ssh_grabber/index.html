@@ -38,49 +38,29 @@
 
 <body>
   <br>
-  <hr>
   <center>
-    <h2>
-      <b>
-       SSH KEY AUDIT
-      </b>
-    </h2>
+    <h2> Select Instance </h2>
   </center>
   <hr>
   <br>
   <center>
     <table BORDER='2'>
       <tr>
-        <th><b>S.NO</b></th>
-        <th><b>USER</b></th>
-        <th><b>AUTHORISED</b></th>
-        <th><b>LAST AUDIT</b></th>
+<th><b>Instance Id</b></th>
+        <th><b>Instance name</b></th>
+<th><b>Category</b></th>
+          <th><b>Purpose</b></th>
+        <th><b>IPV4</b></th>
+        <th><b>Region</b></th>
+        <th><b>Action</b></th>
       </tr>
-{{i=0}}
-{{for x in k:}}
-{{if len(x) > 10 :}}
-{{lf=x.rfind(" ")}}
-{{i=i+1}}
-        <tr>
-{{=TD(i)}}
-{{ =TD(x[lf:-1]) }}
-{{ =TD("FALSE") }}
-{{ =TD("TODAY") }}
-{{pass}}
-</tr>
-{{pass}}
-
+      {{for row in rows:}}
+      <tr>{{=TD(row.id)}}{{=TD(row.name)}}{{=TD(row.category)}}{{=TD(row.purpose)}}{{=TD(row.pub_ipv4)}}{{=TD(row.hosted_region)}}{{=TD(A(T ("Fetch SSH KEYS") ,_href=URL("authSshGet",args=row.id)))}}</tr>
+      {{pass}}
     </table>
-    <br>
   </center>
   <br>
-  <hr>
   <br>
-  </center>
 </body>
 
 </html>
-
-
-
-
