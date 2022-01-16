@@ -4,35 +4,51 @@
 
 <head>
   <style>
-    table tr:nth-child(even) {
-      background-color: #eee;
-    }
 
-    table tr:nth-child(odd) {
-      background-color: #fff;
-    }
+      #myProgress {
+          width: 100%;
+          background-color: #ddd;
+      }
 
-    table th {
-      background-color: orange;
-      color: white;
-    }
+      #myBar {
+          width: 10%;
+          height: 30px;
+          background-color: #04AA6D;
+          text-align: center;
+          line-height: 30px;
+          color: white;
+      }
 
-    table,
-    th,
-    td {
-      border: 1px solid black;
-      border-collapse: collapse;
-    }
 
-    th,
-    td {
-      padding: 5px;
-      text-align: center;
-    }
+      table tr:nth-child(even) {
+          background-color: #dcd1d1;
+      }
 
-    th {
-      text-align: center;
-    }
+      table tr:nth-child(odd) {
+          background-color: #fff;
+      }
+
+      table th {
+          background-color: orange;
+          color: #0a0101;
+      }
+
+      table,
+      th,
+      td {
+          border: 1px solid black;
+          border-collapse: collapse;
+      }
+
+      th,
+      td {
+          padding: 5px;
+          text-align: center;
+      }
+
+      th {
+          text-align: center;
+      }
   </style>
 </head>
 
@@ -42,37 +58,75 @@
     <h2> Select Instance </h2>
   </center>
   <hr>
+<center>
+  <br> Loading :
+</center>
   <br>
-  <center>
-    <table BORDER='2'>
+<div id="myProgress">
+  <div id="myBar">0%</div>
+</div>
+<center>
+
+  <br>
+  <br>
+ <table BORDER='2' class = auditTable>
       <tr>
-<th><b>Ins.Id</b></th>
+        <th><b>Ins.Id</b></th>
         <th><b>Instance name</b></th>
-<th><b>Category</b></th>
-          <th><b>Purpose</b></th>
+        <th><b>Category</b></th>
+        <th><b>Purpose</b></th>
         <th><b>IPV4</b></th>
         <th><b>Region</b></th>
-<th><b>Last Check</b></th>
+        <th><b>Last Check</b></th>
         <th><b>Action</b></th>
       </tr>
-      {{for row in rows:}}
-        {{query = (db.db_serverSshData.instance_id == row.instance_id)}}
-        {{x = db(query).select(db.db_serverSshData.ALL, orderby=~db.db_serverSshData.id, limitby=(0, 1)).first()}}
-        {{if x == None:}}
-        {{lastFetch="Not Initiated"}}
-        {{elif x.auth_keys == 'TimeoutError':}}
-        {{lastFetch="N/A"}}
-        {{elif x.auth_keys == 'ValueError':}}
-        {{lastFetch="N/A"}}
-        {{else:}}
-        {{lastFetch=x.time_stamp}}
-        {{pass}}
-      <tr>{{=TD(row.id)}}{{=TD(row.name)}}{{=TD(row.category)}}{{=TD(row.purpose)}}{{=TD(row.pub_ipv4)}}{{=TD(row.hosted_region)}}{{=TD(lastFetch)}}{{=TD(A(T ("Audit") ,_href=URL("authSshGet",args=row.id)))}}</tr>
-      {{pass}}
-    </table>
-  </center>
-  <br>
-  <br>
+ </table>
+</center>
 </body>
+
+<script>
+var x = 1;
+let k = "";
+let xtraFetch = 1;
+jQuery(document).ready(function(){
+
+   interval = setInterval(function () {
+
+        $.get('{{=URL('fetchTblValue')}}', function (data, status) {
+          k = data;
+       });
+
+        $.get('{{=URL('fetchProgsValue')}}', function (data, status) {
+          x = data;
+          if(x==100){
+              xtraFetch =+1 ;
+              if(xtraFetch==10) {
+                  clearInterval(interval);
+                  xtraFetch = 0;
+              }
+          }
+       });
+
+        jQuery('.auditTable').empty();
+        jQuery('.auditTable').append(k);
+
+        var elem = document.getElementById("myBar");
+        var width = 0;
+        var id = setInterval(frame, 1);
+
+        function frame() {
+            if (width >= 100) {
+                clearInterval(id);
+            } else {
+                width = x ;
+                elem.style.width = width + "%";
+                elem.innerHTML = width + "%";
+            }
+        }
+
+    }, 2000);
+
+});
+</script>
 
 </html>

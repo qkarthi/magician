@@ -17,8 +17,41 @@ def sshShell(endpoint, username, credential, cmd):
 
 @auth.requires_login()
 def index():
+    row = db(db.db_serverSshData.id > 0).select(db.db_serverSshData.ALL, orderby=~db.db_serverSshData.id, limitby=(0, 1)).first()
+    session.TblLstRow = row.id
     rows = db().select(db.db_serverDet.ALL)
+    db(db.db_serverDet.ssh_fetch == 0).update(ssh_fetch=1)
     return dict(rows=rows)
+
+def fetchTblValue():
+    strSnd = "<tr><th><b>Ins.Id</b></th><th><b>Instance name</b></th><th><b>Category</b></th><th><b>Purpose</b></th><th><b>IPV4</b></th><th><b>Region</b></th><th><b>Last Check</b></th><th><b>Action</b></th></tr>"
+    rowsCount = db((db.db_serverSshData.id > session.TblLstRow) & (db.db_serverSshData.instance_id == db.db_serverDet.instance_id)).count()
+    rowsALL = db((db.db_serverSshData.id > session.TblLstRow) & (
+                db.db_serverSshData.instance_id == db.db_serverDet.instance_id)).select()
+    if rowsCount > 0:
+        for row in rowsALL:
+            if row.db_serverSshData.auth_keys == None:
+                 lastFetch = "Not Initiated"
+                 print(lastFetch)
+            elif row.db_serverSshData.auth_keys == 'TimeoutError':
+                 lastFetch = "N/A"
+            elif row.db_serverSshData.auth_keys == 'ValueError':
+                lastFetch = "N/A"
+            else:
+                lastFetch = row.db_serverSshData.time_stamp
+            strSnd = strSnd + "<tr><td>" + str(row.db_serverDet.id) + "</td><td>" + str(row.db_serverDet.name) + "</td><td>" + str(row.db_serverDet.category) + "</td><td>" + str(row.db_serverDet.purpose) + "</td><td>" + str(row.db_serverDet.pub_ipv4) + "</td><td>" + str(row.db_serverDet.hosted_region) + "</td><td>" + str(lastFetch) + "</td></tr>"
+    return strSnd
+
+
+@auth.requires_login()
+def fetchProgsValue():
+    totS = db(db.db_serverDet).count()
+    query = (db.db_serverDet.ssh_fetch == 0)
+    totSshGdb = db(query).count()
+    serSshRemCnt = (totSshGdb/totS)*100
+    return int(serSshRemCnt)
+
+
 
 @auth.requires_login()
 def authSshGet():

@@ -39,4 +39,4 @@ while True:
     authSsFetch()
     time.sleep(3)
 
-# python3 .\web2py.py -S welcome -M -R applications/welcome/private/serverConMan.py
+# python .\web2py.py -S welcome -M -R applications/welcome/private/serverConMan.py

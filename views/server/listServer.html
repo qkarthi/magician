@@ -34,22 +34,6 @@
       text-align: center;
     }
   </style>
-    <script type="text/javascript">
-        var searchStyle = document.getElementById("search_style");
-        document.getElementById("search").addEventListener("input", function () {
-            if (!this.value) {
-                searchStyle.innerHTML = "";
-                return;
-            }
-            // look ma, no indexOf!
-            searchStyle.innerHTML =
-                    '.searchable:not([data-index*="' +
-                    this.value.toLowerCase() +
-                    '"]) { display: none; }';
-            // beware of css injections!
-        });
-    </script>
-
 
 </head>
 
@@ -59,15 +43,6 @@
     <h2> Server Details </h2>
   </center>
   <hr>
-  <div class="row">
-      <div class="ml-auto bg-warning">
-          <div class="input-group">
-              <input class="form-control border-secondary py-2" id="search" type="search" placeholder="Search"/>
-          </div>
-      </div>
-  </div>
-
-  <style id="search_style"></style>
 
   <br>
   <center>
@@ -83,13 +58,12 @@
         <th><b>Region</b></th>
         <th><b>Action</b></th>
       </tr>
-        <ul class="search">
+
       {{for row in rows:}}
-        <div class="searchable" data-index="{{=row.pub_ipv4}}">
       <tr>{{=TD(row.id)}}{{=TD(row.name)}}{{=TD(row.instance_id)}}{{=TD(row.category)}}{{=TD(row.purpose)}}{{=TD(row.pub_ipv4)}}{{=TD(row.pri_ipv4)}}{{=TD(row.hosted_region)}}{{=TD(A(T ("Edit") ,_href=URL("editServer",args=row.id)))}}</tr>
       {{pass}}
     </table>
-  </ul>
+
   </center>
   <br>
   <br>

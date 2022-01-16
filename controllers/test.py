@@ -1,6 +1,7 @@
 def index():
     session.x = 1
-    return dict()
+    rows = db().select(db.db_serverDet.ALL)
+    return dict(rows=rows)
 
 def resetValue():
     session.x = 1

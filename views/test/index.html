@@ -1,4 +1,51 @@
 {{extend 'layout.html'}}
+<style>
+#myProgress {
+  width: 100%;
+  background-color: #ddd;
+}
+
+#myBar {
+  width: 10%;
+  height: 30px;
+  background-color: #04AA6D;
+  text-align: center;
+  line-height: 30px;
+  color: white;
+}
+
+
+table tr:nth-child(even) {
+    background-color: #dcd1d1;
+}
+
+table tr:nth-child(odd) {
+    background-color: #fff;
+}
+
+table th {
+    background-color: orange;
+    color: #0a0101;
+}
+
+table,
+th,
+td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 5px;
+    text-align: center;
+}
+
+th {
+    text-align: center;
+}
+</style>
+
 <form>
 <INPUT id =tgt_btn class="tgt" type="button" value="get time" onclick="ajax('{{=URL('fetchTime')}}',[],'time');"/>
 <INPUT type="text" id="q" name = "q" value='cat /home/ubuntu/.ssh/authorized_keys'/>
@@ -9,7 +56,15 @@
         time :
 <div id="time"> UNKNOWN </div>
 
-<div id="exy" class="exy"> time2 </div>
+<div id="exy" class="exy"> count </div>
+<br>
+<br>
+<h1>JavaScript Progress Bar</h1>
+
+<div id="myProgress">
+  <div id="myBar">10%</div>
+</div>
+
 <br/>
 <br/>
         Echo :
@@ -21,21 +76,80 @@
 <div class="one" id="a">Hello</div>
 <div class="two" id="b">World</div>
 
-
+<br>
+        <br>
+        <br>
+<table BORDER='2' class = myTable>
+    <tr>
+        <th><b>S.no</b></th>
+        <th><b>Instance name</b></th>
+        <th><b>Instance ID</b></th>
+        <th><b>Category</b></th>
+        <th><b>Purpose</b></th>
+        <th><b>PUB-IPV4</b></th>
+        <th><b>Private</b></th>
+        <th><b>Region</b></th>
+        <th><b>Action</b></th>
+    </tr>
+    {{for row in rows:}}
+            <tr>{{=TD(row.id)}}{{=TD(row.name)}}{{=TD(row.instance_id)}}{{=TD(row.category)}}{{=TD(row.purpose)}}{{=TD(row.pub_ipv4)}}{{=TD(row.pri_ipv4)}}{{=TD(row.hosted_region)}}{{=TD(A(T ("Edit") ,_href=URL("editServer",args=row.id)))}}</tr>
+        {{pass}}
+</table>
 <script>
+var x = 1;
+let k = "";
 jQuery(document).ready(function(){
    jQuery('.one').click(function(){jQuery('.two').slideToggle()});
+
+   interval1 = setInterval(function () {
+        jQuery('.tgt').click();
+    }, 2000);
+
+   interval2 = setInterval(function () {
+
+        jQuery(ajax('{{=URL('fetchValue')}}', [], 'exy'));
+
+        $.get('{{=URL('fetchValue')}}', function (data, status) {
+          k = data;
+       });
+
+        jQuery('.myTable').append(k);
+
+        if (jQuery('.exy').text() > 5) {
+            clearInterval(interval1);
+            clearInterval(interval2);
+        }
+
+
+        if (jQuery('.exy').text() > 10) {
+            window.location = '{{=URL('default', 'index')}}';
+        }
+
+        var elem = document.getElementById("myBar");
+        var width = 0;
+        var id = setInterval(frame, 1);
+
+        function frame() {
+            if (width >= 100) {
+                clearInterval(id);
+            } else {
+                width = jQuery('.exy').text() * 10;
+                elem.style.width = width + "%";
+                elem.innerHTML = width + "%";
+            }
+        }
+
+    }, 2000);
+
+
+
+
+
 });
 
-setInterval(function(){
-   jQuery('.tgt').click();
-}, 2000);
 
-setInterval(function(){
-    jQuery(ajax('{{=URL('fetchValue')}}',[],'exy'))
-    if (jQuery('.exy').text() > 10){
-    window.location = '{{=URL('default', 'index')}}';
-    }
-}, 1000);
+
+
+
 </script>
 
