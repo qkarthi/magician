@@ -39,7 +39,10 @@ def fetchTblValue():
                 lastFetch = "N/A"
             else:
                 lastFetch = row.db_serverSshData.time_stamp
-            strSnd = strSnd + "<tr><td>" + str(row.db_serverDet.id) + "</td><td>" + str(row.db_serverDet.name) + "</td><td>" + str(row.db_serverDet.category) + "</td><td>" + str(row.db_serverDet.purpose) + "</td><td>" + str(row.db_serverDet.pub_ipv4) + "</td><td>" + str(row.db_serverDet.hosted_region) + "</td><td>" + str(lastFetch) + "</td></tr>"
+
+            #{{_href = URL(\"authSshGet\", args=row.id)))}}
+            btn = "<form method=\"post\" action=\"authSshGet/"+str(row.db_serverDet.id)+"\"><input type=\"submit\" value=\"Audit\"></form>"
+            strSnd = strSnd + "<tr><td>" + str(row.db_serverDet.id) + "</td><td>" + str(row.db_serverDet.name) + "</td><td>" + str(row.db_serverDet.category) + "</td><td>" + str(row.db_serverDet.purpose) + "</td><td>" + str(row.db_serverDet.pub_ipv4) + "</td><td>" + str(row.db_serverDet.hosted_region) + "</td><td>" + str(lastFetch) + "</td> <td>" + btn + "</td></tr>"
     return strSnd
 
 
