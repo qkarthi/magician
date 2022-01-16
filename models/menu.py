@@ -34,6 +34,9 @@ if not configuration.get('app.production'):
             (T('Add (N) User - 1 Server'), False, URL('welcome', 'ssh_grabber', 'addmuss')),
             (T('DEL 1 User - (N) Server'), False, URL('welcome', 'ssh_grabber', 'delsums')),
         ]),
+        (T('Test'), False, '#', [
+            (T('test modules'), False, URL('welcome', 'test', 'index'))
+        ]),
 
 
     ]

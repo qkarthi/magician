@@ -1,49 +1,41 @@
 {{extend 'layout.html'}}
 <form>
-<INPUT type="button" value="ssh start" onclick="ajax('{{=URL('sshStart')}}',[],'status');"/>
-<INPUT type="button" value="ssh stop" onclick="ajax('{{=URL('sshStop')}}',[],'status');"/>
-    <br>
-    <br>
+<INPUT id =tgt_btn class="tgt" type="button" value="get time" onclick="ajax('{{=URL('fetchTime')}}',[],'time');"/>
 <INPUT type="text" id="q" name = "q" value='cat /home/ubuntu/.ssh/authorized_keys'/>
-    <br>
-<INPUT type="button" value="submit" onclick="ajax('{{=URL('sshCmd')}}',['q'],'ex');"/>
+<INPUT type="button" value="send" onclick="ajax('{{=URL('sshCmd')}}',['q'],'ex');"/>
 </form>
-<br/>
-        Status :
-<div id="status"> UNKNOWN </div>
-<br/>
-        <br>
-        ECHO
-<div id="ex"></div>
 
+<br/>
+        time :
+<div id="time"> UNKNOWN </div>
 
+<div id="exy" class="exy"> time2 </div>
+<br/>
+<br/>
+        Echo :
+
+<div id="ex" > ECHO : NULL </div>
+<br/>
+
+<INPUT type="button" value="Reset Value" onclick="ajax('{{=URL('resetValue')}}');"/>
 <div class="one" id="a">Hello</div>
 <div class="two" id="b">World</div>
 
-<progress id="progress" value="0"></progress>
-<button id="button">Start uploading</button>
-<span id="display"></span>
 
 <script>
 jQuery(document).ready(function(){
    jQuery('.one').click(function(){jQuery('.two').slideToggle()});
 });
-</script>
-<script type="text/javascript">
-var progressBar = document.getElementById("progress"),
-    xhr = new XMLHttpRequest();
-xhr.open("POST", "https://zinoui.com/demo/progress-bar/upload.php", true);
-xhr.upload.onprogress = function (e) {
-    if (e.lengthComputable) {
-        var ratio = Math.floor((e.loaded / e.total) * 100) + '%';
-        console.log(ratio);
+
+setInterval(function(){
+   jQuery('.tgt').click();
+}, 2000);
+
+setInterval(function(){
+    jQuery(ajax('{{=URL('fetchValue')}}',[],'exy'))
+    if (jQuery('.exy').text() > 10){
+    window.location = '{{=URL('default', 'index')}}';
     }
-}
-xhr.upload.onloadstart = function (e) {
-    progressBar.value = 0;
-}
-xhr.upload.onloadend = function (e) {
-    progressBar.value = e.loaded;
-}
-xhr.send(new FormData());
+}, 1000);
 </script>
+
