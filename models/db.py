@@ -181,11 +181,16 @@ db.define_table('db_user',
                 Field('stage', 'boolean'),
                 Field('production', 'boolean')
                 )
-db.define_table('db_serverSshData',
+db.define_table('db_serverCmdExec',
                 Field('server_named', 'string', requires=IS_NOT_EMPTY()),
                 Field('instance_id', 'string', requires=IS_NOT_EMPTY()),
+                Field('ip_address', 'string'),
                 Field('username', 'string'),
-                Field('auth_keys', 'text')
+                Field('cred_method', 'string'),
+                Field('trans_purp', 'string'),
+                Field('cmd', 'text'),
+                Field('stdout_', 'text'),
+                Field('xecuted', 'boolean')
                 )
 
 # Fields can be 'string','text','password','integer','double','boolean'

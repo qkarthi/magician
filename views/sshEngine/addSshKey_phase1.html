@@ -1,0 +1,124 @@
+{{extend 'layout.html'}}
+        {{import ast}}
+<!DOCTYPE html>
+<html>
+
+<head>
+  <style>
+
+      #myProgress {
+          width: 100%;
+          background-color: #ddd;
+      }
+
+      #myBar {
+          width: 10%;
+          height: 30px;
+          background-color: #04AA6D;
+          text-align: center;
+          line-height: 30px;
+          color: white;
+      }
+
+
+      table tr:nth-child(even) {
+          background-color: #dcd1d1;
+      }
+
+      table tr:nth-child(odd) {
+          background-color: #fff;
+      }
+
+      table th {
+          background-color: orange;
+          color: #0a0101;
+      }
+
+      table,
+      th,
+      td {
+          border: 1px solid black;
+          border-collapse: collapse;
+      }
+
+      th,
+      td {
+          padding: 5px;
+          text-align: center;
+      }
+
+      th {
+          text-align: center;
+      }
+  </style>
+</head>
+
+<body>
+  <br>
+  <center>
+    <h2> VERIFICATION </h2>
+
+  <hr>
+  <br>
+  <br>
+ <table BORDER='2'>
+     <tr>
+         <th><b>Ins.Id</b></th>
+         <th><b>Instance name</b></th>
+         <th><b>Category</b></th>
+         <th><b>Purpose</b></th>
+         <th><b>IPV4</b></th>
+         <th><b>Region</b></th>
+         <th><b>Last Check</b></th>
+        <th><b>User</b></th>
+         <th><b>Deployment</b></th>
+     </tr>
+
+{{userRow = db(db.db_user.id == session.SelUsr).select()}}
+{{usrKey=userRow[0].ssh_key_id}}
+ {{rows = db(db.db_serverDet.id.belongs(session.SelServ)).select()}}
+     {{for instRow in rows:}}
+        {{row = db(db.db_serverCmdExec.instance_id == instRow.instance_id).select(db.db_serverCmdExec.ALL,orderby=~db.db_serverCmdExec.id, limitby=(0, 1)).first()}}
+        {{if row != None:}}
+            {{if row.stdout_ == None:}}
+                {{stat = "Not Initiated"}}
+            {{elif row.stdout_ == 'TimeoutError':}}
+                {{stat = "U/L"}}
+            {{elif row.stdout_ == 'ValueError':}}
+                {{stat = "K/E"}}
+            {{else:}}
+                {{stat = "Available"}}
+			    {{k = ast.literal_eval(row.stdout_)}}
+                {{keyList = []}}
+                {{for x in k:}}
+                    {{if len(x) > 10 :}}
+                        {{lf=x.rfind(" ")}}
+                        {{sshKeyId=x[lf:-1]}}
+                        {{sshKeyId=sshKeyId[1:]}}
+                        {{keyList.append(sshKeyId)}}
+                    {{pass}}
+                {{pass}}
+                {{if usrKey in keyList:}}
+                {{stat="Key Exist - " +str(usrKey)}}
+                {{pass}}
+            {{pass}}
+        {{uname=row.cmd}}
+        {{uname=uname[:(uname.find(".")+(-1))]}}
+        {{uname=uname[uname.rfind("/")+1: ]}}
+        {{pass}}
+        <tr>
+         <td>{{=str(instRow.id)}} </td>
+         <td>{{=str(instRow.name)}}</td>
+         <td>{{=str(instRow.category)}}</td>
+         <td>{{=str(instRow.purpose)}} </td>
+         <td>{{=str(instRow.pub_ipv4)}}</td>
+         <td>{{=str(instRow.hosted_region)}}</td>
+         <td>{{=str(row.modified_on)}}</td>
+        <td>{{=uname}}</td>
+         <td>{{=stat}}</td>
+         </tr>
+     {{pass}}
+
+ </table>
+</center>
+</body>

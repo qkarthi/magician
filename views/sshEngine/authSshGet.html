@@ -1,0 +1,99 @@
+{{extend 'layout.html'}}
+<!DOCTYPE html>
+<html>
+
+<head>
+  <style>
+    table tr:nth-child(even) {
+      background-color: #eee;
+    }
+
+    table tr:nth-child(odd) {
+      background-color: #fff;
+    }
+
+    table th {
+      background-color: orange;
+      color: white;
+    }
+
+    table,
+    th,
+    td {
+      border: 1px solid black;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 5px;
+      text-align: center;
+    }
+
+    th {
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <br>
+  <hr>
+  <center>
+    <h2>
+      <b>
+       SSH KEY AUDIT
+      </b>
+    </h2>
+  </center>
+  <hr>
+  <br>
+  <center>
+    <table BORDER='2'>
+      <tr>
+        <th><b>S.NO</b></th>
+        <th><b>USER</b></th>
+        <th><b>AUTHORISED</b></th>
+      </tr>
+{{i=0}}
+    {{tk=0}}
+{{for x in k:}}
+{{if len(x) > 10 :}}
+{{lf=x.rfind(" ")}}
+{{i=i+1}}
+        <tr>
+{{=TD(i)}}
+{{sshKeyId=x[lf:-1]}}
+{{ =TD(sshKeyId) }}
+{{sshKeyId=sshKeyId[1:]}}
+{{validSsh = db(db.db_user.ssh_key_id == sshKeyId).count()}}
+{{if validSsh:}}
+{{ =TD("TRUE") }}
+{{tk=tk+1}}
+{{else:}}
+{{ =TD("-") }}
+{{pass}}
+{{pass}}
+</tr>
+{{pass}}
+
+
+
+    </table>
+    <br>
+      <table>
+          <tr><td> Total number of SSH KEYS Present </td> <td>{{=i}}</td>  </tr>
+          <tr><td> Total number of Vulnarability KEYS </td> <td>{{=i-tk}}</td>  </tr>
+</table>
+  <br>
+  <br>
+      <hr>
+  </center>
+
+</body>
+
+</html>
+
+
+
+
