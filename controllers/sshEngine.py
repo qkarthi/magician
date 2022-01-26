@@ -37,7 +37,7 @@ def index():
                                        xecuted=xecuted)
     else:
         count = db.db_serverDet.instance_id.count()
-        for row in db(((db.db_serverCmdExec.trans_purp == "sshKeyFetch") & (db.db_serverCmdExec.xecuted != 0)) & (db.db_serverCmdExec.instance_id == db.db_serverDet.instance_id)).select(db.db_serverDet.ALL, count, groupby=db.db_serverDet.instance_id, orderby=db.db_serverDet.id):
+        for row in db((((db.db_serverCmdExec.trans_purp == "sshKeyFetch") & (db.db_serverCmdExec.xecuted != 0)) & (db.db_serverCmdExec.instance_id == db.db_serverDet.instance_id))|(db.db_serverCmdExec.instance_id != db.db_serverDet.instance_id)).select(db.db_serverDet.ALL, count, groupby=db.db_serverDet.instance_id, orderby=db.db_serverDet.id):
             server_named = row.db_serverDet.name
             instance_id = row.db_serverDet.instance_id
             xecuted = 0
@@ -51,7 +51,7 @@ def index():
 
 @auth.requires_login()
 def fetchTblValue():
-    strSnd = "<tr><th><b>Ins.Id</b></th><th><b>Instance name</b></th><th><b>Category</b></th><th><b>Purpose</b></th><th><b>IPV4</b></th><th><b>Region</b></th><th><b>Last Check</b></th><th><b>Action</b></th></tr>"
+    strSnd = ""
     rowsALL = db((db.db_serverCmdExec.id > session.TblLstRow) & (
             db.db_serverCmdExec.instance_id == db.db_serverDet.instance_id) & (db.db_serverCmdExec.xecuted == 1) & (db.db_serverCmdExec.trans_purp == "sshKeyFetch")).select()
     if rowsALL != None:
@@ -87,10 +87,11 @@ def fetchProgsValue():
 def authSshGet():
     import ast
     for row in db(db.db_serverDet.id == request.args(0, cast=int)).select():
+        serverName = row.name
         query = (db.db_serverCmdExec.instance_id == row.instance_id)
         x = db(query).select(db.db_serverCmdExec.ALL, orderby=~db.db_serverCmdExec.id, limitby=(0, 1)).first()
         k = x.stdout_
-    return dict(k=ast.literal_eval(k))
+    return dict(k=ast.literal_eval(k),serverName=serverName)
 
 @auth.requires_login()
 def addSshKey(x):
@@ -99,24 +100,6 @@ def addSshKey(x):
 
 @auth.requires_login()
 def addSshKey_phase1():
-    strSnd = "<tr><th><b>Ins.Id</b></th><th><b>Instance name</b></th><th><b>Category</b></th><th><b>Purpose</b></th><th><b>IPV4</b></th><th><b>Region</b></th><th><b>Last Check</b></th><th><b>Action</b></th></tr>"
-    rows = db(db.db_serverDet.id.belongs(session.SelServ)).select()
-    for instRow in rows:
-        row = db(db.db_serverCmdExec.instance_id == instRow.instance_id).select(db.db_serverCmdExec.ALL, orderby=~db.db_serverCmdExec.id, limitby=(0, 1)).first()
-        if row != None:
-            if row.stdout_ == None:
-                stat = "Not Initiated"
-            elif row.stdout_ == 'TimeoutError':
-                stat = "U/L"
-            elif row.stdout_ == 'ValueError':
-                stat = "I/K"
-            else:
-                stat = "DEPLOYABLE"
-            strSnd = strSnd + "<tr><td>" + str(instRow.id) + "</td><td>" + str(
-                instRow.name) + "</td><td>" + str(instRow.category) + "</td><td>" + str(
-                instRow.purpose) + "</td><td>" + str(instRow.pub_ipv4) + "</td><td>" + str(
-                instRow.hosted_region) + "</td><td>" + str(row.modified_on) + "</td> <td>" + stat + "</td></tr>"
-
     return dict()
 
 
@@ -162,3 +145,61 @@ def add1ums_phase1():
         form = SQLFORM.grid(query, fields = fields_x, selectable=lambda ids: addSshKey(ids), user_signature=False, csv=False,
                         searchable=False, create=False, details=False, editable=False, deletable=False)
     return dict(form=form)
+
+
+def sshKeyDeploy():
+    #session.SelUsr
+    #session.SelServ
+
+    import ast
+    avail = 0
+    k=[]
+
+    userRow = db(db.db_user.id == session.SelUsr).select()
+    usrKey = userRow[0].ssh_key_id
+
+    usrName = userRow[0].name
+    usrNameinfo = userRow[0].emp_id + " - " + userRow[0].name
+
+    rows = db(db.db_serverDet.id.belongs(session.SelServ)).select()
+    for instRow in rows:
+        row = db(db.db_serverCmdExec.instance_id == instRow.instance_id).select(db.db_serverCmdExec.ALL,
+                                                                                orderby=~db.db_serverCmdExec.id,
+                                                                                limitby=(0, 1)).first()
+        if row != None:
+            if row.stdout_ == None:
+                stat = "Not Initiated"
+            elif row.stdout_ == 'TimeoutError':
+                stat = "U/L"
+            elif row.stdout_ == 'ValueError':
+                stat = "K/E"
+            else:
+                stat = "Available"
+                k = ast.literal_eval(row.stdout_)
+            keyList = []
+            for x in k:
+                if len(x) > 10:
+                    lf = x.rfind(" ")
+                    sshKeyId = x[lf:-1]
+                    sshKeyId = sshKeyId[1:]
+                    keyList.append(sshKeyId)
+
+            if usrKey in keyList:
+                stat = "Key Exist - " + str(usrKey)
+            else:
+                avail = 1
+                cred_method = "sshPubKey"
+                trans_purp = 'sshKeyAdd'
+                username = instRow.username
+                instance_id = instRow.instance_id
+                xecuted = 0
+                server_named = instRow.name
+                cmd = "echo \"" + userRow[0].ssh_key + "\" >> /home/ubuntu/.ssh/authorized_keys"
+                countPresent = db((db.db_serverCmdExec.instance_id == instRow.instance_id) & (db.db_serverCmdExec.xecuted == 0) & (db.db_serverCmdExec.trans_purp == 'sshKeyAdd') & (db.db_serverCmdExec.info == usrNameinfo)).count()
+                print(countPresent)
+                if countPresent == 0:
+                    db.db_serverCmdExec.insert(server_named=server_named, instance_id=instance_id, username=username,
+                                               ip_address=str(instRow.pub_ipv4), cred_method=cred_method, trans_purp=trans_purp,
+                                               cmd=cmd, info=usrNameinfo,
+                                               xecuted=xecuted)
+    return dict()

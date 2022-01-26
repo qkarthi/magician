@@ -11,7 +11,7 @@ def sshShell(endpoint, username, credential, cmd):
                        key_filename="C:\\Users\\karthik\\OneDrive\\OneDrive - Spin Games LLC\\.ssh\\id_rsa")
         stdin, stdout, stderr = ssh_client.exec_command(cmd)
         k = stdout.readlines()
-        print("ssh key fetched")
+        print("Executed")
     except TimeoutError:
         print("ssh key failed - TimeoutError")
         k = "TimeoutError"
@@ -23,8 +23,8 @@ def sshShell(endpoint, username, credential, cmd):
     return k
 
 
-def authSsFetch():
-    for row in db(db.db_serverCmdExec.xecuted == 0).select():
+def userSsh(x):
+    for row in db((db.db_serverCmdExec.xecuted == 0) & (db.db_serverCmdExec.trans_purp == x)).select():
         ip_add = row.ip_address
         print(ip_add)
         username = row.username
@@ -36,7 +36,18 @@ def authSsFetch():
         db.commit()
 
 while True:
-    authSsFetch()
-    time.sleep(3)
+    userSsh("sshKeyFetch")
+    userSsh("sshKeyAdd")
+    time.sleep(2)
+
+
+'''
+cut -d: -f1,3 /etc/passwd | egrep ':[0-9]{4}$' | cut -d: -f1
+
+useradd -m -p sp044 karthik
+
+[ -d "/home/ubuntu/.ssh/" ] && echo "true"
+'''
+
 
 # python ..\..\.\web2py.py -S welcome -M -R applications/welcome/private/serverConMan.py

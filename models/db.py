@@ -190,7 +190,8 @@ db.define_table('db_serverCmdExec',
                 Field('trans_purp', 'string'),
                 Field('cmd', 'text'),
                 Field('stdout_', 'text'),
-                Field('xecuted', 'boolean')
+                Field('xecuted', 'boolean'),
+                Field('info', 'string')
                 )
 
 # Fields can be 'string','text','password','integer','double','boolean'

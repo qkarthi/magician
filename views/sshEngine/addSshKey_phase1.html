@@ -70,22 +70,42 @@
          <th><b>IPV4</b></th>
          <th><b>Region</b></th>
          <th><b>Last Check</b></th>
-        <th><b>User</b></th>
+        <th><b>Server User</b></th>
+        <th><b>EMP ID - Name</b></th>
          <th><b>Deployment</b></th>
      </tr>
-
+{{avail=[]}}
+ {{mdfd=""}}
+ {{uname =""}}
+ {{stat=""}}
+ {{info0=""}}
+{{info1=""}}
+{{info2=""}}
+{{info3=""}}
 {{userRow = db(db.db_user.id == session.SelUsr).select()}}
 {{usrKey=userRow[0].ssh_key_id}}
+{{usrName=userRow[0].name}}
+{{usrName=userRow[0].emp_id +" - "+userRow[0].name}}
  {{rows = db(db.db_serverDet.id.belongs(session.SelServ)).select()}}
      {{for instRow in rows:}}
-        {{row = db(db.db_serverCmdExec.instance_id == instRow.instance_id).select(db.db_serverCmdExec.ALL,orderby=~db.db_serverCmdExec.id, limitby=(0, 1)).first()}}
+        {{row = db((db.db_serverCmdExec.instance_id == instRow.instance_id) &(db.db_serverCmdExec.trans_purp != 'sshKeyAdd')).select(db.db_serverCmdExec.ALL,orderby=~db.db_serverCmdExec.id, limitby=(0, 1)).first()}}
         {{if row != None:}}
+            {{mdfd=row.modified_on}}
+            {{uname=row.cmd}}
+            {{uname=uname[:(uname.find(".")+(-1))]}}
+            {{uname=uname[uname.rfind("/")+1: ]}}
             {{if row.stdout_ == None:}}
                 {{stat = "Not Initiated"}}
+                {{avail.append("N/I")}}
+                {{info0="Note : Kindly wait for server Audit to complete"}}
             {{elif row.stdout_ == 'TimeoutError':}}
                 {{stat = "U/L"}}
+                {{avail.append("U/L")}}
+                {{info1="Note : Deployment will be IGNORED on server with U/L or KE"}}
             {{elif row.stdout_ == 'ValueError':}}
                 {{stat = "K/E"}}
+                {{avail.append("K/E")}}
+                {{info1="Note : Deployment will be IGNORED on server with U/L or KE"}}
             {{else:}}
                 {{stat = "Available"}}
 			    {{k = ast.literal_eval(row.stdout_)}}
@@ -100,11 +120,18 @@
                 {{pass}}
                 {{if usrKey in keyList:}}
                 {{stat="Key Exist - " +str(usrKey)}}
+                {{info2="Note : Deployment will be IGNORED for Key Exist Server"}}
+                {{avail.append("EX")}}
+                {{else:}}
+                {{avail.append("AV")}}
                 {{pass}}
             {{pass}}
-        {{uname=row.cmd}}
-        {{uname=uname[:(uname.find(".")+(-1))]}}
-        {{uname=uname[uname.rfind("/")+1: ]}}
+        {{else:}}
+        {{info3="INFO : Audit Not Happen; Kindly Audit Server wise First "}}
+        {{stat = "Not Inspected"}}
+        {{mdfd="Not Initiated"}}
+        {{avail.append("ANC")}}
+        {{uname=" "}}
         {{pass}}
         <tr>
          <td>{{=str(instRow.id)}} </td>
@@ -113,12 +140,32 @@
          <td>{{=str(instRow.purpose)}} </td>
          <td>{{=str(instRow.pub_ipv4)}}</td>
          <td>{{=str(instRow.hosted_region)}}</td>
-         <td>{{=str(row.modified_on)}}</td>
+         <td>{{=mdfd}}</td>
         <td>{{=uname}}</td>
+            <td>{{=usrName}}</td>
          <td>{{=stat}}</td>
          </tr>
      {{pass}}
 
  </table>
+<br>
+      <br>
+      <h3>{{=info0}}</h3>
+      <h3>{{=info1}}</h3>
+        <h3>{{=info2}}</h3>
+      <h3>{{=info3}}</h3>
+
+
+<br>
+  {{=A(T("Cancel"), _href=URL('default','index'), _class='btn btn-danger',
+  _style="height:40px;width:150px;")}}
+      <br>
+      <br>
+  {{if not "N/I" in avail:}}
+        {{if "AV" in avail:}}
+  {{=A(T("Deploy SSH Key"), _href=URL('sshEngine','sshKeyDeploy'), _class='btn btn-success',
+  _style="height:40px;width:150px;")}}
+      {{pass}}
+  {{pass}}
 </center>
 </body>

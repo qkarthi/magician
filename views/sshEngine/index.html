@@ -11,7 +11,7 @@
       }
 
       #myBar {
-          width: 10%;
+          width: 0%;
           height: 30px;
           background-color: #04AA6D;
           text-align: center;
@@ -69,7 +69,7 @@
 
   <br>
   <br>
- <table BORDER='2' class = auditTable>
+ <table BORDER='2'>
       <tr>
         <th><b>Ins.Id</b></th>
         <th><b>Instance name</b></th>
@@ -80,6 +80,18 @@
         <th><b>Last Check</b></th>
         <th><b>Action</b></th>
       </tr>
+    <tbody  class = auditTable>
+    <tr>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+      </tr>
+    </tbody>
  </table>
 </center>
 </body>
@@ -89,9 +101,7 @@ var x = 1;
 let k = "";
 let xtraFetch = 1;
 jQuery(document).ready(function(){
-
    interval = setInterval(function () {
-
         $.get('{{=URL('fetchTblValue')}}', function (data, status) {
           k = data;
        });
