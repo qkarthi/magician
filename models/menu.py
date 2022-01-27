@@ -32,7 +32,7 @@ if not configuration.get('app.production'):
             (T('Audit server wise'), False, URL('welcome', 'sshEngine', 'index')),
             (T('Add 1 User - (N) Server'), False, URL('welcome', 'sshEngine', 'add1ums')),
             (T('Add (N) User - 1 Server'), False, URL('welcome', 'sshEngine', 'addmuss')),
-            (T('DEL 1 User - (N) Server'), False, URL('welcome', 'sshEngine', 'delsums')),
+            (T('DEL 1 User - (N) Server'), False, URL('welcome', 'sshEngine', 'del1ums')),
         ]),
         (T('Test'), False, '#', [
             (T('test modules'), False, URL('welcome', 'test', 'index'))

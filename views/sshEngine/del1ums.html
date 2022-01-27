@@ -39,7 +39,7 @@
 <body>
   <br>
   <center>
-    <h2> Select User </h2>
+    <h2> Select User to DELETE</h2>
   </center>
   <hr>
   <br>
@@ -53,29 +53,11 @@
 
           <th><b>Email</b></th>
         <th><b>SSH Key Id</b></th>
-        <th><b>Authorized Area</b></th>
         <th><b>Action</b></th>
       </tr>
       {{for row in rows:}}
       <tr>{{=TD(row.id)}}{{=TD(row.emp_id)}}{{=TD(row.name)}}{{=TD(row.team)}}{{=TD(row.email)}}{{=TD(row.ssh_key_id)}}
-        <td>
-        {{if row.development:}}
-          DEVELOPMENT<br>
-        {{pass}}
-        {{if row.testing:}}
-            TESTING <br>
-        {{pass}}
-        {{if row.research:}}
-            RESEARCH <br>
-        {{pass}}
-        {{if row.stage:}}
-            STAGE <br>
-        {{pass}}
-        {{if row.production:}}
-            PRODUCTION <br>
-        {{pass}}
-        </td>
-      {{=TD(A(T ("Push SSH") ,_href=URL("add1ums_phase1",args=row.id)))}}</tr>
+      {{=TD(A(T ("Revoke SSH") ,_href=URL("del1ums_phase1",args=row.id)))}}</tr>
       {{pass}}
     </table>
   </center>

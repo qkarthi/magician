@@ -1,16 +1,3 @@
-@auth.requires_login()
-def sshShell(endpoint, username, credential, cmd):
-    import paramiko
-    ssh_client = paramiko.SSHClient()
-    ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh_client.connect(endpoint, username=username, password=credential,
-                       key_filename="C:\\Users\\karthik\\OneDrive\\OneDrive - Spin Games LLC\\.ssh\\id_rsa")
-    stdin, stdout, stderr = ssh_client.exec_command(cmd)
-    k = stdout.readlines()
-    print(k)
-    ssh_client.close()
-    return k
-###################################################################################################################
 ###################################################################################################################
 @auth.requires_login()
 def index():
@@ -48,7 +35,7 @@ def index():
             cmd = "cat /home/ubuntu/.ssh/authorized_keys"
             db.db_serverCmdExec.insert(server_named=server_named,instance_id=instance_id,username=username,ip_address=ip_address,cred_method=cred_method,trans_purp=trans_purp,cmd=cmd,xecuted=xecuted)
     return dict()
-
+##########################
 @auth.requires_login()
 def fetchTblValue():
     strSnd = ""
@@ -75,14 +62,15 @@ def fetchTblValue():
                 row.db_serverDet.hosted_region) + "</td><td>" + str(
                 row.db_serverCmdExec.modified_on) + "</td> <td>" + btn + "</td></tr>"
     return strSnd
-
+##########################
 @auth.requires_login()
 def fetchProgsValue():
     tots = db((db.db_serverDet.id > 0)).count()
     totSshGdb = db((db.db_serverCmdExec.xecuted == 0) & (db.db_serverCmdExec.trans_purp == "sshKeyFetch")).count()
     serSshRemCnt = 100-((totSshGdb/tots)*100)
     return int(serSshRemCnt)
-
+##########################
+#below function for fetcthing individual auth details
 @auth.requires_login()
 def authSshGet():
     import ast
@@ -93,28 +81,7 @@ def authSshGet():
         k = x.stdout_
     return dict(k=ast.literal_eval(k),serverName=serverName)
 
-@auth.requires_login()
-def addSshKey(x):
-    session.SelServ = x
-    redirect(URL('addSshKey_phase1'))
-
-@auth.requires_login()
-def addSshKey_phase1():
-    return dict()
-
-
-
-@auth.requires_login()
-def del1ums():
-    return dict()
-
-@auth.requires_login()
-def addmuss():
-    query = db.db_user.id > 0
-    fields = (db.db_user.name, db.db_user.team, db.db_user.ssh_key_id, db.db_user.emp_id)
-    form = SQLFORM.grid(query, fields, selectable=lambda ids : addSshKey(ids), user_signature=False, csv=False, searchable=False, create=False, details=False, editable=False, deletable=False)
-    return dict(form=form)
-
+###################################################################################
 @auth.requires_login()
 def add1ums():
     rows = db().select(db.db_user.ALL)
@@ -146,7 +113,17 @@ def add1ums_phase1():
                         searchable=False, create=False, details=False, editable=False, deletable=False)
     return dict(form=form)
 
+@auth.requires_login()
+def addSshKey(x):
+    session.SelServ = x
+    redirect(URL('addSshKey_phase1'))
 
+@auth.requires_login()
+def addSshKey_phase1():
+    #Verification page
+    return dict()
+
+@auth.requires_login()
 def sshKeyDeploy():
     #session.SelUsr
     #session.SelServ
@@ -203,3 +180,54 @@ def sshKeyDeploy():
                                                cmd=cmd, info=usrNameinfo,
                                                xecuted=xecuted)
     return dict()
+
+###################################################################################
+@auth.requires_login()
+def del1ums():
+    rows = db().select(db.db_user.ALL)
+    return dict(rows=rows)
+#######################################
+@auth.requires_login()
+def del1ums_phase1():
+    import ast
+    x = request.args(0, cast=int)
+    session.SelUsr = x
+    serverFiltered=[]
+    userRow = db(db.db_user.id == session.SelUsr).select()
+    usrKey = userRow[0].ssh_key_id
+    keyList = []
+    count = db.db_serverCmdExec.id.max()
+    for row in db((db.db_serverCmdExec.instance_id == db.db_serverDet.instance_id)&(db.db_serverCmdExec.trans_purp == 'sshKeyFetch')&(db.db_serverCmdExec.xecuted == 1)).select(db.db_serverCmdExec.ALL, count, groupby=db.db_serverDet.instance_id):
+        if row != None:
+            if ((row.db_serverCmdExec.stdout_ != None) & (row.db_serverCmdExec.stdout_ != 'TimeoutError') & (row.db_serverCmdExec.stdout_ != 'ValueError')):
+                k = ast.literal_eval(row.db_serverCmdExec.stdout_)
+                keyList = []
+                for x in k:
+                    if len(x) > 10:
+                        lf = x.rfind(" ")
+                        sshKeyId = x[lf:-1]
+                        sshKeyId = sshKeyId[1:]
+                        keyList.append(sshKeyId)
+                if usrKey in keyList:
+                    serverFiltered.append(row.db_serverCmdExec.instance_id)
+    print(serverFiltered)
+    query = db(db.db_serverDet.instance_id.belongs(serverFiltered))
+    fields_x = (db.db_serverDet.name, db.db_serverDet.purpose, db.db_serverDet.category, db.db_serverDet.pub_ipv4,
+                db.db_serverDet.pri_ipv4, db.db_serverDet.hosted_region)
+    form = SQLFORM.grid(query, fields=fields_x, selectable=lambda ids: delSshKey(ids), user_signature=False, csv=False,
+                        searchable=False, create=False, details=False, editable=False, deletable=False)
+    return dict(form=form)
+
+def delsshKey_phase1(x):
+    redirect(URL(''))
+###################################################################################
+'''
+@auth.requires_login()
+def addmuss():
+    query = db.db_user.id > 0
+    fields = (db.db_user.name, db.db_user.team, db.db_user.ssh_key_id, db.db_user.emp_id)
+    form = SQLFORM.grid(query, fields, selectable=lambda ids : addSshKey(ids), user_signature=False, csv=False, searchable=False, create=False, details=False, editable=False, deletable=False)
+    return dict(form=form)
+'''
+
+
