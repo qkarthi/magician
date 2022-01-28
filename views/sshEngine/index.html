@@ -57,14 +57,6 @@
   <center>
     <h2> Select Instance </h2>
   </center>
-  <hr>
-<center>
-  <br> Loading :
-</center>
-  <br>
-<div id="myProgress">
-  <div id="myBar">0%</div>
-</div>
 <center>
 
   <br>
@@ -78,65 +70,64 @@
         <th><b>IPV4</b></th>
         <th><b>Region</b></th>
         <th><b>Last Check</b></th>
+<th><b>user</b></th>
         <th><b>Action</b></th>
       </tr>
-    <tbody  class = auditTable>
-    <tr>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-      </tr>
+
+
+ {{mdfd=""}}
+ {{uname =""}}
+ {{stat=""}}
+        {{for row in rows:}}
+     <tr>
+        {{if row != None:}}
+            {{mdfd=row.db_serverCmdExec.modified_on}}
+            {{uname=row.db_serverCmdExec.cmd}}
+            {{uname=uname[:(uname.find(".")+(-1))]}}
+            {{uname=uname[uname.rfind("/")+1: ]}}
+            {{if row.db_serverCmdExec.stdout_ == None:}}
+                {{stat = "Not Initiated"}}
+            {{elif row.db_serverCmdExec.stdout_ == 'TimeoutError':}}
+                {{stat = "U/L"}}
+            {{elif row.db_serverCmdExec.stdout_ == 'ValueError':}}
+                {{stat = "K/E"}}
+            {{else:}}
+                {{stat = A(T("View"), _href=URL('authSshGet' ,args=[row.db_serverDet.id] ))}}
+            {{pass}}
+        {{else:}}
+        {{stat = "Not Inspected"}}
+        {{mdfd="Not Initiated"}}
+        {{uname=" "}}
+        {{pass}}
+        <tr>
+     <td>{{=str(row.db_serverDet.id)}} </td>
+     <td>{{=str(row.db_serverDet.name)}}</td>
+     <td>{{=str(row.db_serverDet.category)}}</td>
+     <td>{{=str(row.db_serverDet.purpose)}} </td>
+     <td>{{=str(row.db_serverDet.pub_ipv4)}}</td>
+     <td>{{=str(row.db_serverDet.hosted_region)}}</td>
+     <td>{{=mdfd}}</td>
+     <td>{{=uname}}</td>
+     <td>{{=stat}}</td>
+         </tr>
+
+
+
+        {{pass}}
+
     </tbody>
  </table>
+    <br>
+    <br>
+    <br>
+{{=A(T("Audit now"), _href=URL('sshEngine','updSerNow_init'), _class='btn btn-danger',
+  _style="height:40px;width:150px;")}}
+<br>
+    <br>
 </center>
 </body>
 
-<script>
-var x = 1;
-let k = "";
-let xtraFetch = 1;
-jQuery(document).ready(function(){
-   interval = setInterval(function () {
-        $.get('{{=URL('fetchTblValue')}}', function (data, status) {
-          k = data;
-       });
 
-        $.get('{{=URL('fetchProgsValue')}}', function (data, status) {
-          x = data;
-          if(x==100){
-              xtraFetch =+1 ;
-              if(xtraFetch==10) {
-                  clearInterval(interval);
-                  xtraFetch = 0;
-              }
-          }
-       });
 
-        jQuery('.auditTable').empty();
-        jQuery('.auditTable').append(k);
-
-        var elem = document.getElementById("myBar");
-        var width = 0;
-        var id = setInterval(frame, 1);
-
-        function frame() {
-            if (width >= 100) {
-                clearInterval(id);
-            } else {
-                width = x ;
-                elem.style.width = width + "%";
-                elem.innerHTML = width + "%";
-            }
-        }
-
-    }, 2000);
-
-});
-</script>
 
 </html>

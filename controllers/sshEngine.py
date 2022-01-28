@@ -1,39 +1,52 @@
-###################################################################################################################
 @auth.requires_login()
 def index():
+    count = db.db_serverCmdExec.id.max()
+    rows = db((db.db_serverCmdExec.instance_id == db.db_serverDet.instance_id) & (
+            db.db_serverCmdExec.trans_purp == 'sshKeyFetch') & (db.db_serverCmdExec.xecuted == 1)).select(db.db_serverDet.ALL,db.db_serverCmdExec.ALL,count,orderby=db.db_serverDet.id, groupby=db.db_serverDet.instance_id)
+    return dict(rows=rows)
+###################################################################################################################
+@auth.requires_login()
+def updSerNow_init():
+    session.serverFetch = 1
+    redirect(URL('updSerNow'))
+###################################################################################################################
+@auth.requires_login()
+def updSerNow():
     # Get No.of Records in DB
-    row = db(db.db_serverCmdExec.id > 0).select(db.db_serverCmdExec.ALL, orderby=~db.db_serverCmdExec.id, limitby=(0, 1)).first()
-    if row == None:
-        session.TblLstRow = 0
-    else:
-        session.TblLstRow = row.id
-    # collect make a request to handler
-    cnt = db(db.db_serverCmdExec.id > 0).count()
-    if cnt == 0:
-        for row in db(db.db_serverDet.instance_id>0).select(orderby=db.db_serverDet.id):
-            server_named = row.name
-            instance_id = row.instance_id
-            xecuted = 0
-            username = row.username
-            ip_address = row.pub_ipv4
-            cred_method = "sshPubKey"
-            trans_purp = "sshKeyFetch"
-            cmd = "cat /home/ubuntu/.ssh/authorized_keys"
-            db.db_serverCmdExec.insert(server_named=server_named, instance_id=instance_id, username=username,
-                                       ip_address=ip_address, cred_method=cred_method, trans_purp=trans_purp, cmd=cmd,
-                                       xecuted=xecuted)
-    else:
-        count = db.db_serverDet.instance_id.count()
-        for row in db((((db.db_serverCmdExec.trans_purp == "sshKeyFetch") & (db.db_serverCmdExec.xecuted != 0)) & (db.db_serverCmdExec.instance_id == db.db_serverDet.instance_id))|(db.db_serverCmdExec.instance_id != db.db_serverDet.instance_id)).select(db.db_serverDet.ALL, count, groupby=db.db_serverDet.instance_id, orderby=db.db_serverDet.id):
-            server_named = row.db_serverDet.name
-            instance_id = row.db_serverDet.instance_id
-            xecuted = 0
-            username = row.db_serverDet.username
-            ip_address = row.db_serverDet.pub_ipv4
-            cred_method = "sshPubKey"
-            trans_purp = "sshKeyFetch"
-            cmd = "cat /home/ubuntu/.ssh/authorized_keys"
-            db.db_serverCmdExec.insert(server_named=server_named,instance_id=instance_id,username=username,ip_address=ip_address,cred_method=cred_method,trans_purp=trans_purp,cmd=cmd,xecuted=xecuted)
+    if session.serverFetch == 1:
+        session.serverFetch = 0
+        row = db(db.db_serverCmdExec.id > 0).select(db.db_serverCmdExec.ALL, orderby=~db.db_serverCmdExec.id, limitby=(0, 1)).first()
+        if row == None:
+            session.TblLstRow = 0
+        else:
+            session.TblLstRow = row.id
+        # collect make a request to handler
+        cnt = db(db.db_serverCmdExec.id > 0).count()
+        if cnt == 0:
+            for row in db(db.db_serverDet.instance_id>0).select(orderby=db.db_serverDet.id):
+                server_named = row.name
+                instance_id = row.instance_id
+                xecuted = 0
+                username = row.username
+                ip_address = row.pub_ipv4
+                cred_method = "sshPubKey"
+                trans_purp = "sshKeyFetch"
+                cmd = "cat /home/ubuntu/.ssh/authorized_keys"
+                db.db_serverCmdExec.insert(server_named=server_named, instance_id=instance_id, username=username,
+                                           ip_address=ip_address, cred_method=cred_method, trans_purp=trans_purp, cmd=cmd,
+                                           xecuted=xecuted)
+        else:
+            count = db.db_serverDet.instance_id.count()
+            for row in db((((db.db_serverCmdExec.trans_purp == "sshKeyFetch") & (db.db_serverCmdExec.xecuted != 0)) & (db.db_serverCmdExec.instance_id == db.db_serverDet.instance_id))|(db.db_serverCmdExec.instance_id != db.db_serverDet.instance_id)).select(db.db_serverDet.ALL, count, groupby=db.db_serverDet.instance_id, orderby=db.db_serverDet.id):
+                server_named = row.db_serverDet.name
+                instance_id = row.db_serverDet.instance_id
+                xecuted = 0
+                username = row.db_serverDet.username
+                ip_address = row.db_serverDet.pub_ipv4
+                cred_method = "sshPubKey"
+                trans_purp = "sshKeyFetch"
+                cmd = "cat /home/ubuntu/.ssh/authorized_keys"
+                db.db_serverCmdExec.insert(server_named=server_named,instance_id=instance_id,username=username,ip_address=ip_address,cred_method=cred_method,trans_purp=trans_purp,cmd=cmd,xecuted=xecuted)
     return dict()
 ##########################
 @auth.requires_login()
@@ -179,6 +192,13 @@ def sshKeyDeploy():
                                                ip_address=str(instRow.pub_ipv4), cred_method=cred_method, trans_purp=trans_purp,
                                                cmd=cmd, info=usrNameinfo,
                                                xecuted=xecuted)
+                    trans_purp = 'sshKeyFetch'
+                    cmd = "cat /home/ubuntu/.ssh/authorized_keys"
+                    db.db_serverCmdExec.insert(server_named=server_named, instance_id=instance_id, username=username,
+                                               ip_address=str(instRow.pub_ipv4), cred_method=cred_method,
+                                               trans_purp=trans_purp,
+                                               cmd=cmd, info=usrNameinfo,
+                                               xecuted=xecuted)
     return dict()
 
 ###################################################################################
@@ -210,24 +230,55 @@ def del1ums_phase1():
                         keyList.append(sshKeyId)
                 if usrKey in keyList:
                     serverFiltered.append(row.db_serverCmdExec.instance_id)
-    print(serverFiltered)
     query = db(db.db_serverDet.instance_id.belongs(serverFiltered))
     fields_x = (db.db_serverDet.name, db.db_serverDet.purpose, db.db_serverDet.category, db.db_serverDet.pub_ipv4,
                 db.db_serverDet.pri_ipv4, db.db_serverDet.hosted_region)
-    form = SQLFORM.grid(query, fields=fields_x, selectable=lambda ids: delSshKey(ids), user_signature=False, csv=False,
+    form = SQLFORM.grid(query, fields=fields_x, selectable=lambda ids: delsshKey_phase1(ids), user_signature=False, csv=False,
                         searchable=False, create=False, details=False, editable=False, deletable=False)
     return dict(form=form)
 
 def delsshKey_phase1(x):
-    redirect(URL(''))
+    print(x)
+    userRow = db(db.db_user.id == session.SelUsr).select()
+    usrKey = userRow[0].ssh_key_id
+    usrNameinfo = userRow[0].emp_id + " - " + userRow[0].name
+    for instRow in db(db.db_serverDet.id.belongs(x)).select():
+        cred_method = "sshPubKey"
+        trans_purp = 'sshKeyDel'
+        username = instRow.username
+        instance_id = instRow.instance_id
+        xecuted = 0
+        server_named = instRow.name
+        #sed '/ karthikeyan.p@spingames.net/d' authorized_keys1 > authorized_keys
+        cmd = "sudo sed -i '/" + usrKey + "/d' /home/ubuntu/.ssh/authorized_keys"
+        countPresent = db((db.db_serverCmdExec.instance_id == instRow.instance_id) & (db.db_serverCmdExec.xecuted == 0) & (
+                    db.db_serverCmdExec.trans_purp == 'sshKeyDel') & (db.db_serverCmdExec.info == usrNameinfo)).count()
+        print(countPresent)
+        if countPresent == 0:
+            db.db_serverCmdExec.insert(server_named=server_named, instance_id=instance_id, username=username,
+                                       ip_address=str(instRow.pub_ipv4), cred_method=cred_method, trans_purp=trans_purp,
+                                       cmd=cmd, info=usrNameinfo,
+                                       xecuted=xecuted)
+            trans_purp = 'sshKeyFetch'
+            cmd = "cat /home/ubuntu/.ssh/authorized_keys"
+            db.db_serverCmdExec.insert(server_named=server_named, instance_id=instance_id, username=username,
+                                       ip_address=str(instRow.pub_ipv4), cred_method=cred_method,
+                                       trans_purp=trans_purp,
+                                       cmd=cmd, info=usrNameinfo,
+                                       xecuted=xecuted)
+        redirect(URL('delsshKey_phase2'))
+
+def delsshKey_phase2():
+    return dict()
 ###################################################################################
-'''
+
+
 @auth.requires_login()
 def addmuss():
     query = db.db_user.id > 0
     fields = (db.db_user.name, db.db_user.team, db.db_user.ssh_key_id, db.db_user.emp_id)
     form = SQLFORM.grid(query, fields, selectable=lambda ids : addSshKey(ids), user_signature=False, csv=False, searchable=False, create=False, details=False, editable=False, deletable=False)
     return dict(form=form)
-'''
+
 
 

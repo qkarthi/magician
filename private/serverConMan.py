@@ -36,8 +36,9 @@ def userSsh(x):
         db.commit()
 
 while True:
-    userSsh("sshKeyFetch")
     userSsh("sshKeyAdd")
+    userSsh("sshKeyDel")
+    userSsh("sshKeyFetch")
     time.sleep(2)
 
 

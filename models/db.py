@@ -167,6 +167,21 @@ db.define_table('db_serverDet',
                 Field('vpn', requires=IS_IN_SET(['N/A', 'NJ', 'MI', 'PA'])),
                 Field('ssh_fetch', 'boolean', default=False,writable=False, readable=False)
                 )
+db.define_table('db_serverDet_arch',
+                Field('name', 'string', requires=IS_NOT_EMPTY()),
+                Field('instance_id', 'string', requires=IS_NOT_EMPTY()),
+                Field('pub_ipv4', requires=IS_MATCH('((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}'), label=T('IPV4 Public Address')),  # need a regular expression
+                Field('pri_ipv4', requires=IS_MATCH('((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}'), label=T('IPV4 Private Address')),  # need a regular expression
+                Field('pub_ipv4_dns', 'string'),
+                Field('username', 'string', requires=IS_NOT_EMPTY()),
+                Field('credential', 'string'),
+                Field('category', 'string', requires=IS_IN_SET(['Development', 'Testing', 'Research', 'Stage', 'Production'])),
+                Field('purpose', 'string', requires=IS_IN_SET(['Webserver', 'Load_balancer', 'Database', 'Backup'])),
+                Field('hosted_region', 'string', requires=IS_IN_SET(['N_virginia', 'Oregon', 'Sydney'])),
+                Field('vpn', requires=IS_IN_SET(['N/A', 'NJ', 'MI', 'PA'])),
+                Field('ssh_fetch', 'boolean', default=False,writable=False, readable=False)
+                )
+
 
 db.define_table('db_user',
                 Field('name', 'string', requires=IS_NOT_EMPTY()),
@@ -181,6 +196,20 @@ db.define_table('db_user',
                 Field('stage', 'boolean'),
                 Field('production', 'boolean')
                 )
+db.define_table('db_user_arch',
+                Field('name', 'string', requires=IS_NOT_EMPTY()),
+                Field('team', 'string', requires=IS_IN_SET(['DevOps', 'Development', 'QA', 'Testing'])),
+                Field('email', 'string', requires=IS_EMAIL()),
+                Field('emp_id', 'string', requires=IS_NOT_EMPTY()),
+                Field('ssh_key', 'text', requires=IS_NOT_EMPTY()),
+                Field('ssh_key_id', 'string', requires=IS_NOT_EMPTY()),
+                Field('development', 'boolean'),
+                Field('testing', 'boolean'),
+                Field('research', 'boolean'),
+                Field('stage', 'boolean'),
+                Field('production', 'boolean')
+                )
+
 db.define_table('db_serverCmdExec',
                 Field('server_named', 'string', requires=IS_NOT_EMPTY()),
                 Field('instance_id', 'string', requires=IS_NOT_EMPTY()),
