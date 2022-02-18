@@ -167,6 +167,7 @@ db.define_table('db_serverDet',
                 Field('vpn', requires=IS_IN_SET(['N/A', 'NJ', 'MI', 'PA'])),
                 Field('ssh_fetch', 'boolean', default=False,writable=False, readable=False)
                 )
+
 db.define_table('db_serverDet_arch',
                 Field('name', 'string', requires=IS_NOT_EMPTY()),
                 Field('instance_id', 'string', requires=IS_NOT_EMPTY()),
@@ -182,7 +183,6 @@ db.define_table('db_serverDet_arch',
                 Field('ssh_fetch', 'boolean', default=False,writable=False, readable=False)
                 )
 
-
 db.define_table('db_user',
                 Field('name', 'string', requires=IS_NOT_EMPTY()),
                 Field('team', 'string', requires=IS_IN_SET(['DevOps', 'Development', 'QA', 'Testing'])),
@@ -196,6 +196,7 @@ db.define_table('db_user',
                 Field('stage', 'boolean'),
                 Field('production', 'boolean')
                 )
+
 db.define_table('db_user_arch',
                 Field('name', 'string', requires=IS_NOT_EMPTY()),
                 Field('team', 'string', requires=IS_IN_SET(['DevOps', 'Development', 'QA', 'Testing'])),

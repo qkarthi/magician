@@ -1,0 +1,49 @@
+{{extend 'layout.html'}}
+
+<head>
+  <style>
+    table tr:nth-child(even) {
+      background-color: #eee;
+    }
+
+    table tr:nth-child(odd) {
+      background-color: #fff;
+    }
+
+    table th {
+      background-color: orange;
+      color: white;
+    }
+
+    table,
+    th,
+    td {
+      border: 1px solid black;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 5px;
+      text-align: center;
+    }
+
+    th {
+      text-align: center;
+    }
+  </style>
+</head>
+<hr>
+<center>
+  <h2>
+    <b>
+      ARCHIVE SERVER
+    </b>
+  </h2>
+</center>
+<hr>
+<center>
+  <table BORDER='2'>
+    {{=form}}
+  </table>
+</center>

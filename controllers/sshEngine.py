@@ -31,7 +31,7 @@ def updSerNow():
                 ip_address = row.pub_ipv4
                 cred_method = "sshPubKey"
                 trans_purp = "sshKeyFetch"
-                cmd = "cat /home/ubuntu/.ssh/authorized_keys"
+                cmd = "cat /home/"+ username+"/.ssh/authorized_keys"
                 db.db_serverCmdExec.insert(server_named=server_named, instance_id=instance_id, username=username,
                                            ip_address=ip_address, cred_method=cred_method, trans_purp=trans_purp, cmd=cmd,
                                            xecuted=xecuted)
@@ -45,7 +45,7 @@ def updSerNow():
                 ip_address = row.db_serverDet.pub_ipv4
                 cred_method = "sshPubKey"
                 trans_purp = "sshKeyFetch"
-                cmd = "cat /home/ubuntu/.ssh/authorized_keys"
+                cmd = "cat /home/" + username + "/.ssh/authorized_keys"
                 db.db_serverCmdExec.insert(server_named=server_named,instance_id=instance_id,username=username,ip_address=ip_address,cred_method=cred_method,trans_purp=trans_purp,cmd=cmd,xecuted=xecuted)
     return dict()
 ##########################
@@ -184,7 +184,7 @@ def sshKeyDeploy():
                 instance_id = instRow.instance_id
                 xecuted = 0
                 server_named = instRow.name
-                cmd = "echo \"" + userRow[0].ssh_key + "\" >> /home/ubuntu/.ssh/authorized_keys"
+                cmd = "echo \"" + userRow[0].ssh_key + "\" >> /home/"+username+"/.ssh/authorized_keys"
                 countPresent = db((db.db_serverCmdExec.instance_id == instRow.instance_id) & (db.db_serverCmdExec.xecuted == 0) & (db.db_serverCmdExec.trans_purp == 'sshKeyAdd') & (db.db_serverCmdExec.info == usrNameinfo)).count()
                 print(countPresent)
                 if countPresent == 0:
@@ -193,7 +193,7 @@ def sshKeyDeploy():
                                                cmd=cmd, info=usrNameinfo,
                                                xecuted=xecuted)
                     trans_purp = 'sshKeyFetch'
-                    cmd = "cat /home/ubuntu/.ssh/authorized_keys"
+                    cmd = "cat /home/" + username + "/.ssh/authorized_keys"
                     db.db_serverCmdExec.insert(server_named=server_named, instance_id=instance_id, username=username,
                                                ip_address=str(instRow.pub_ipv4), cred_method=cred_method,
                                                trans_purp=trans_purp,
@@ -250,7 +250,7 @@ def delsshKey_phase1(x):
         xecuted = 0
         server_named = instRow.name
         #sed '/ karthikeyan.p@spingames.net/d' authorized_keys1 > authorized_keys
-        cmd = "sudo sed -i '/" + usrKey + "/d' /home/ubuntu/.ssh/authorized_keys"
+        cmd = "sudo sed -i '/" + usrKey + "/d' /home/"+ username +"/.ssh/authorized_keys"
         countPresent = db((db.db_serverCmdExec.instance_id == instRow.instance_id) & (db.db_serverCmdExec.xecuted == 0) & (
                     db.db_serverCmdExec.trans_purp == 'sshKeyDel') & (db.db_serverCmdExec.info == usrNameinfo)).count()
         print(countPresent)
@@ -260,7 +260,7 @@ def delsshKey_phase1(x):
                                        cmd=cmd, info=usrNameinfo,
                                        xecuted=xecuted)
             trans_purp = 'sshKeyFetch'
-            cmd = "cat /home/ubuntu/.ssh/authorized_keys"
+            cmd = "cat /home/"+ username +"/.ssh/authorized_keys"
             db.db_serverCmdExec.insert(server_named=server_named, instance_id=instance_id, username=username,
                                        ip_address=str(instRow.pub_ipv4), cred_method=cred_method,
                                        trans_purp=trans_purp,
