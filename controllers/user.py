@@ -25,7 +25,7 @@ def addUser():
 def archiveUser(x):
     rows = db(db.db_user.id.belongs(x)).select()
     for row in rows:
-        db.db_user_arch.insert(name=row.name, team=row.team, email=row.email, emp_id=row.emp_id, ssh_key=row.ssh_key,
+        db.db_user_arch.insert(name=row.name,last_name=row.last_name, team=row.team, email=row.email, emp_id=row.emp_id, ssh_key=row.ssh_key,
                                ssh_key_id=row.ssh_key_id, development=row.development, testing=row.testing,
                                research=row.research, stage=row.stage, production=row.production)
         db(db.db_user.id == row.id).delete()
@@ -41,7 +41,7 @@ def delUser():
 def restoreUser(x):
     rows = db(db.db_user_arch.id.belongs(x)).select()
     for row in rows:
-        db.db_user.insert(name=row.name, team=row.team, email=row.email, emp_id=row.emp_id, ssh_key=row.ssh_key,
+        db.db_user.insert(name=row.name,last_name=row.last_name, team=row.team, email=row.email, emp_id=row.emp_id, ssh_key=row.ssh_key,
                                ssh_key_id=row.ssh_key_id, development=row.development, testing=row.testing,
                                research=row.research, stage=row.stage, production=row.production)
         db(db.db_user_arch.id == row.id).delete()

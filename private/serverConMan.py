@@ -1,14 +1,21 @@
 ## in file /app/private/mail_queue.py
 import datetime
+import os
+import sys
 import time
 def sshShell(endpoint, username, credential, cmd):
     import paramiko
     ssh_client = paramiko.SSHClient()
     ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+    CWD = sys.path[0]
+    # for linux => "/" |||| for windows => "\\"
+    os_dirSym = "/"
+    file_name = "id_rsa"
     k = ""
     try:
         ssh_client.connect(endpoint, username=username, password=credential,
-                       key_filename="C:\\Users\\karthik\\OneDrive\\OneDrive - Spin Games LLC\\.ssh\\id_rsa")
+                       key_filename=CWD+os_dirSym+file_name)
         stdin, stdout, stderr = ssh_client.exec_command(cmd)
         k = stdout.readlines()
         print("Executed")
