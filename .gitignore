@@ -2,3 +2,4 @@ errors/
 sessions/
 *.pyc
 __pycache__/
+databases/
