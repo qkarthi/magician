@@ -1,18 +1,20 @@
 ## in file /app/private/mail_queue.py
 import datetime
-import os
-import sys
 import time
+import os
+
+
 def sshShell(endpoint, username, credential, cmd):
     import paramiko
     ssh_client = paramiko.SSHClient()
     ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-
-    CWD = sys.path[0]
+    CWD = os.path.dirname(os.path.realpath(__file__))
     # for linux => "/" |||| for windows => "\\"
     os_dirSym = "/"
     file_name = "id_rsa"
     k = ""
+
+    print(CWD)
     try:
         ssh_client.connect(endpoint, username=username, password=credential,
                        key_filename=CWD+os_dirSym+file_name)

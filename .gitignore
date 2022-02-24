@@ -3,4 +3,4 @@ sessions/
 *.pyc
 __pycache__/
 databases/
-private/id_rsa
+models/id_rsa
