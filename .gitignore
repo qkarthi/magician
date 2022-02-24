@@ -1,0 +1,4 @@
+errors/
+sessions/
+*.pyc
+__pycache__/
