@@ -14,7 +14,7 @@ def sshShell(endpoint, username, credential, cmd):
     file_name = "id_rsa"
     k = ""
 
-    print(CWD)
+    #print(CWD)
     try:
         ssh_client.connect(endpoint, username=username, password=credential,
                        key_filename=CWD+os_dirSym+file_name)

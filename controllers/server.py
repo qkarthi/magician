@@ -32,7 +32,7 @@ def ArchiveServer(x):
 
 def delServer():
     form = SQLFORM.grid(db.db_serverDet,  selectable=lambda ids: ArchiveServer(ids), user_signature=False,csv=False,
-                        searchable=False, create=False, details=False, editable=False, deletable=False)
+                        paginate=500,searchable=False, create=False, details=False, editable=False, deletable=False)
     return dict(form=form)
 
 
@@ -49,5 +49,5 @@ def restoreServer(x):
 
 def inactServer():
     form = SQLFORM.grid(db.db_serverDet_arch,  selectable=lambda ids: restoreServer(ids), user_signature=False,csv=False,
-                        searchable=False, create=False, details=False, editable=False, deletable=False)
+                        paginate=500,searchable=False, create=False, details=False, editable=False, deletable=False)
     return dict(form=form)

@@ -123,7 +123,7 @@ def add1ums_phase1():
         fields_x = (db.db_serverDet.name, db.db_serverDet.purpose, db.db_serverDet.category, db.db_serverDet.pub_ipv4, db.db_serverDet.pri_ipv4, db.db_serverDet.hosted_region)
         query = ((db.db_serverDet.category == queCat1) | (db.db_serverDet.category == queCat2) | (db.db_serverDet.category == queCat3) | (db.db_serverDet.category == queCat4) | (db.db_serverDet.category == queCat5))
         form = SQLFORM.grid(query, fields = fields_x, selectable=lambda ids: addSshKey(ids), user_signature=False, csv=False,
-                        searchable=False, create=False, details=False, editable=False, deletable=False)
+                        paginate= 500 ,searchable=False, create=False, details=False, editable=False, deletable=False)
     return dict(form=form)
 
 @auth.requires_login()
@@ -234,7 +234,7 @@ def del1ums_phase1():
     fields_x = (db.db_serverDet.name, db.db_serverDet.purpose, db.db_serverDet.category, db.db_serverDet.pub_ipv4,
                 db.db_serverDet.pri_ipv4, db.db_serverDet.hosted_region)
     form = SQLFORM.grid(query, fields=fields_x, selectable=lambda ids: delsshKey_phase1(ids), user_signature=False, csv=False,
-                        searchable=False, create=False, details=False, editable=False, deletable=False)
+                        paginate=500, searchable=False, create=False, details=False, editable=False, deletable=False)
     return dict(form=form)
 
 def delsshKey_phase1(x):
