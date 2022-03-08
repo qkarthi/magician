@@ -1,11 +1,8 @@
 {{extend 'layout.html'}}
-<!DOCTYPE html>
-<html>
-
 <head>
   <style>
     table tr:nth-child(even) {
-      background-color: #dcd1d1;
+      background-color: #eee;
     }
 
     table tr:nth-child(odd) {
@@ -14,7 +11,7 @@
 
     table th {
       background-color: orange;
-      color: #0a0101;
+      color: white;
     }
 
     table,
@@ -34,65 +31,18 @@
       text-align: center;
     }
   </style>
-    <script type="text/javascript">
-        var searchStyle = document.getElementById("search_style");
-        document.getElementById("search").addEventListener("input", function () {
-            if (!this.value) {
-                searchStyle.innerHTML = "";
-                return;
-            }
-            // look ma, no indexOf!
-            searchStyle.innerHTML =
-                    '.searchable:not([data-index*="' +
-                    this.value.toLowerCase() +
-                    '"]) { display: none; }';
-            // beware of css injections!
-        });
-    </script>
-
-
 </head>
-
-<body>
-  <br>
-  <center>
-    <h2> User Details </h2>
-  </center>
-  <hr>
-  <div class="row">
-      <div class="ml-auto bg-warning">
-          <div class="input-group">
-              <input class="form-control border-secondary py-2" id="search" type="search" placeholder="Search"/>
-          </div>
-      </div>
-  </div>
-
-  <style id="search_style"></style>
-
-  <br>
-  <center>
-    <table BORDER='2'>
-      <tr>
-<th><b></b>S.no</b></th>
-        <th><b>Name</b></th>
-        <th><b>Team</b></th>
-        <th><b>Email</b></th>
-        <th><b>Emp-ID</b></th>
-        <th><b>Action</b></th>
-      </tr>
-        <ul class="search">
-      {{for row in rows:}}
-        <div class="searchable" data-index="{{=row.name}}">
-      <tr>{{=TD(row.id)}}{{=TD(row.name)}}{{=TD(row.team)}}{{=TD(row.email)}}{{=TD(row.emp_id)}}{{=TD(A(T ("Edit") ,_href=URL("editUser",args=row.id)))}}</tr>
-      {{pass}}
-    </table>
-  </ul>
-  </center>
-  <br>
-  <br>
-
-
-
-</body>
-
-</html>
+<hr>
+<center>
+  <h2>
+    <b>
+      LIST USER
+    </b>
+  </h2>
+</center>
+<hr>
+<center>
+  <table BORDER='2'>
+    {{=form}}
+  </table>
+</center>

@@ -1,17 +1,17 @@
 @auth.requires_login()
-def editUser():
-    for row in db(db.db_user.id == request.args(0, cast=int)).select():
-        update = db.db_user(row.id)
-        form = SQLFORM(db.db_user, update, submit_button='update', showid=False)
-        form.process(detect_record_change=True)
-        if form.accepted:
-            redirect(URL('listUser'))
-        return dict(form=form)
-
-@auth.requires_login()
 def listUser():
-    rows = db().select(db.db_user.ALL)
-    return dict(rows=rows)
+    form = SQLFORM.grid(db.db_user,  user_signature=False, csv=True,
+                        searchable=True, create=False, details=False, editable=True, deletable=False ,
+                        exportclasses=dict(
+                            csv_with_hidden_cols=False,
+                            xml=False,
+                            html=False,
+                            csv=True,
+                            json=False,
+                            tsv_with_hidden_cols=False,
+                            tsv=False)
+                        )
+    return dict(form=form)
 
 @auth.requires_login()
 def addUser():

@@ -1,11 +1,8 @@
 {{extend 'layout.html'}}
-<!DOCTYPE html>
-<html>
-
 <head>
   <style>
     table tr:nth-child(even) {
-      background-color: #dcd1d1;
+      background-color: #eee;
     }
 
     table tr:nth-child(odd) {
@@ -14,7 +11,7 @@
 
     table th {
       background-color: orange;
-      color: #0a0101;
+      color: white;
     }
 
     table,
@@ -34,42 +31,20 @@
       text-align: center;
     }
   </style>
-
 </head>
-
-<body>
-  <br>
-  <center>
-    <h2> Server List </h2>
-  </center>
-  <hr>
-
-  <br>
-  <center>
-    <table BORDER='2'>
-      <tr>
-        <th><b>S.no</b></th>
-        <th><b>Instance name</b></th>
-        <th><b>Instance ID</b></th>
-        <th><b>Category</b></th>
-        <th><b>Purpose</b></th>
-        <th><b>PUB-IPV4</b></th>
-          <th><b>Private</b></th>
-        <th><b>Region</b></th>
-        <th><b>Action</b></th>
-      </tr>
-
-      {{for row in rows:}}
-      <tr>{{=TD(row.id)}}{{=TD(row.name)}}{{=TD(row.instance_id)}}{{=TD(row.category)}}{{=TD(row.purpose)}}{{=TD(row.pub_ipv4)}}{{=TD(row.pri_ipv4)}}{{=TD(row.hosted_region)}}{{=TD(A(T ("Edit") ,_href=URL("editServer",args=row.id)))}}</tr>
-      {{pass}}
-    </table>
-
-  </center>
-  <br>
-  <br>
-
-
-
-</body>
-
-</html>
+<hr>
+<center>
+  <h2>
+    <b>
+       SERVER LIST
+    </b>
+  </h2>
+</center>
+<hr>
+<center>
+  <table BORDER='2'>
+    {{=form}}
+  </table>
+</center>
+        <br>
+        <br>

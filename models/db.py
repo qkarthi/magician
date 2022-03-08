@@ -156,17 +156,19 @@ db._common_fields.append(signature) #db._common_fields is a list of fields that 
 db.define_table('db_serverDet',
                 Field('name', 'string', requires=IS_NOT_EMPTY()),
                 Field('instance_id', 'string', requires=IS_NOT_EMPTY()),
-                Field('pub_ipv4', requires=IS_MATCH('((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}'), label=T('IPV4 Public Address')),  # need a regular expression
-                Field('pri_ipv4', requires=IS_MATCH('((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}'), label=T('IPV4 Private Address')),  # need a regular expression
+                Field('pub_ipv4', label=T('IPV4 Public Address')),  # need a regular expression
+                Field('pri_ipv4', label=T('IPV4 Private Address')),  # need a regular expression
                 Field('pub_ipv4_dns', 'string'),
                 Field('username', 'string', requires=IS_NOT_EMPTY()),
                 Field('credential', 'string'),
                 Field('category', 'string', requires=IS_IN_SET(['Development', 'Testing', 'Research', 'Stage', 'Production'])),
                 Field('purpose', 'string', requires=IS_IN_SET(['Webserver', 'Load_balancer', 'Database', 'Backup'])),
                 Field('hosted_region', 'string', requires=IS_IN_SET(['N_virginia', 'Oregon', 'Sydney'])),
-                Field('vpn', requires=IS_IN_SET(['N/A', 'NJ', 'MI', 'PA'])),
-                Field('ssh_fetch', 'boolean', default=False,writable=False, readable=False)
+                Field('vpn', requires=IS_IN_SET(['N/A', 'NJ', 'MI', 'PA']))
                 )
+
+
+
 
 db.define_table('db_serverDet_arch',
                 Field('name', 'string', requires=IS_NOT_EMPTY()),
@@ -179,8 +181,7 @@ db.define_table('db_serverDet_arch',
                 Field('category', 'string', requires=IS_IN_SET(['Development', 'Testing', 'Research', 'Stage', 'Production'])),
                 Field('purpose', 'string', requires=IS_IN_SET(['Webserver', 'Load_balancer', 'Database', 'Backup'])),
                 Field('hosted_region', 'string', requires=IS_IN_SET(['N_virginia', 'Oregon', 'Sydney'])),
-                Field('vpn', requires=IS_IN_SET(['N/A', 'NJ', 'MI', 'PA'])),
-                Field('ssh_fetch', 'boolean', default=False,writable=False, readable=False)
+                Field('vpn', requires=IS_IN_SET(['N/A', 'NJ', 'MI', 'PA']))
                 )
 
 db.define_table('db_user',
@@ -188,7 +189,7 @@ db.define_table('db_user',
                 Field('last_name', 'string', requires=IS_NOT_EMPTY()),
                 Field('team', 'string', requires=IS_IN_SET(['DevOps', 'Development', 'QA', 'Testing'])),
                 Field('email', 'string', requires=IS_EMAIL()),
-                Field('emp_id', 'string', requires=IS_NOT_EMPTY()),
+                Field('emp_id', 'string', requires= IS_NOT_EMPTY()),
                 Field('ssh_key', 'text', requires=IS_NOT_EMPTY()),
                 Field('ssh_key_id', 'string', requires=IS_NOT_EMPTY()),
                 Field('development', 'boolean'),
@@ -197,6 +198,8 @@ db.define_table('db_user',
                 Field('stage', 'boolean'),
                 Field('production', 'boolean')
                 )
+
+
 
 db.define_table('db_user_arch',
                 Field('name', 'string', requires=IS_NOT_EMPTY()),
@@ -213,6 +216,7 @@ db.define_table('db_user_arch',
                 Field('production', 'boolean')
                 )
 
+
 db.define_table('db_serverCmdExec',
                 Field('server_named', 'string', requires=IS_NOT_EMPTY()),
                 Field('instance_id', 'string', requires=IS_NOT_EMPTY()),
@@ -225,6 +229,39 @@ db.define_table('db_serverCmdExec',
                 Field('xecuted', 'boolean'),
                 Field('info', 'string')
                 )
+
+
+
+
+
+
+
+db.db_serverDet.name.requires = IS_NOT_IN_DB(db, 'db_serverDet.name')
+db.db_serverDet.instance_id.requires = IS_NOT_IN_DB(db, 'db_serverDet.instance_id')
+db.db_serverDet.pub_ipv4_dns.requires = IS_NOT_IN_DB(db, 'db_serverDet.pub_ipv4_dns')
+db.db_serverDet.pub_ipv4.requires = IS_NOT_IN_DB(db, 'db_serverDet.pub_ipv4')
+db.db_serverDet.pub_ipv4.requires = IS_NOT_IN_DB(db, 'db_serverDet.pub_ipv4')
+#db.db_serverDet.pri_ipv4.requires = IS_MATCH('((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}')
+#db.db_serverDet.pri_ipv4.requires = IS_MATCH('((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}')
+
+db.db_user.email.requires = IS_NOT_IN_DB(db, 'db_user.email')
+db.db_user.emp_id.requires = IS_NOT_IN_DB(db, 'db_user.emp_id')
+db.db_user.ssh_key.requires = IS_NOT_IN_DB(db, 'db_user.ssh_key')
+db.db_user.ssh_key_id.requires = IS_NOT_IN_DB(db, 'db_user.ssh_key_id')
+db.db_user.emp_id.requires = IS_UPPER()
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Fields can be 'string','text','password','integer','double','boolean'
 #       'date','time','datetime','blob','upload', 'reference TABLENAME'
